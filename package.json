@@ -17,7 +17,7 @@
   "homepage": "https://github.com/rsenden/node-red-contrib-property-mapping#readme",
   "node-red": {
     "nodes": {
-      "lower-case": "property-mapping.js"
+      "property-mapping": "property-mapping.js"
     }
   }
 }
