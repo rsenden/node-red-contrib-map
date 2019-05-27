@@ -1,0 +1,171 @@
+<!-- This is the config node for the mappings -->
+<script type="text/x-red" data-template-name="map-config">
+	<div class="form-row">
+        <label for="node-config-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-config-input-name" placeholder="Name">
+    </div>
+    <div class="form-row node-config-input-mapping-container-row">
+        <ol id="node-config-input-mapping-container"></ol>
+    </div>
+    <div class="form-row">
+        <label for="node-config-input-case"><i class="fa fa-tag"></i> ignore case</label>
+        <input type="checkbox" id="node-config-input-case" data-i18n="ignore case">
+    </div>
+</script>
+
+<script type="text/x-red" data-help-name="map-config">
+<p>
+Configure the mappings
+</p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('map-config', {
+        category: 'config',
+        defaults: {
+        	name: {value:"", required:true},
+        	mappings: {value:[{in:"in", out:"out"}]},
+        	case: {value:false}
+        },
+        label: function () {
+            return this.name;
+        },
+        oneditprepare: function() {
+            var node = this;
+            $("#node-config-input-mapping-container").css('min-height','250px').css('min-width','450px').editableList({
+                addItem: function(container,i,opt) {
+                	var mapping = opt.mapping || {in:"in", out:"out"};
+                    container.css({
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap'
+                    });
+                    var row = $('<div/>').appendTo(container);
+                    var inField = $('<input/>',{class:"node-config-input-mapping-in",type:"text",style:"width:40%; margin-left: 5px;"}).appendTo(row).val(mapping.in);
+                    var outField = $('<input/>',{class:"node-config-input-mapping-out",type:"text",style:"width:40%; margin-left: 5px;"}).appendTo(row).val(mapping.out);
+                    var finalspan = $('<span/>',{style:"float: right;margin-top: 6px;"}).appendTo(row);
+                    finalspan.append(' &#8594; <span class="node-config-input-mapping-index">'+(i+1)+'</span> ');
+                },
+                removeItem: function(opt) {
+                    var mappings = $("#node-config-input-mapping-container").editableList('items');
+                    mappings.each(function(i) {
+                        $(this).find(".node-config-input-mapping-index").html(i+1);
+                        var data = $(this).data('data');
+                    });
+                },
+                sortable: false,
+                removable: true
+            });
+
+            for (var i=0;i<this.mappings.length;i++) {
+                var mapping = this.mappings[i];
+                $("#node-config-input-mapping-container").editableList('addItem',{mapping:mapping,i:i});
+            }
+        },
+        oneditsave: function() {
+            var mappings = $("#node-config-input-mapping-container").editableList('items');
+            var mappingset;
+            var node = this;
+            node.mappings = [];
+            mappings.each(function(i) {
+                var mappingData = $(this).data('data');
+                var mapping = $(this);
+                var r = {};
+                r.in = mapping.find(".node-config-input-mapping-in").val();
+                r.out = mapping.find(".node-config-input-mapping-out").val();
+                node.mappings.push(r);
+            });
+        },
+        oneditresize: function(size) {
+            var rows = $("#dialog-form>div:not(.node-config-input-mapping-container-row)");
+            var height = size.height;
+            for (var i=0;i<rows.size();i++) {
+                height -= $(rows[i]).outerHeight(true);
+            }
+            var editorRow = $("#dialog-form>div.node-config-input-mapping-container-row");
+            height -= (parseInt(editorRow.css("marginTop"))+parseInt(editorRow.css("marginBottom")));
+            $("#node-config-input-mapping-container").editableList('height',height);
+        }
+    });
+</script>
+
+
+<!-- This node allows for mapping message properties -->
+<script type="text/x-red" data-template-name="map">
+	<div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row node-input-config">
+        <label for="node-input-config"><i class="icon-bullhorn"></i> Mapping</label>
+        <input type="text" id="node-input-config">
+    </div>
+	<div class="form-row">
+        <label for="node-input-in"><i class="fa fa-ellipsis-h"></i> In Property</label>
+        <input type="text" id="node-input-in" placeholder="payload" style="width:250px;">
+        <input type="hidden" id="node-input-inType">
+    </div>
+	<div class="form-row">
+        <label for="node-input-out"><i class="fa fa-ellipsis-h"></i> Out Property</label>
+        <input type="text" id="node-input-out" placeholder="payload" style="width:250px;">
+        <input type="hidden" id="node-input-outType">
+    </div>
+</script>
+
+<!-- Help text for map -->
+<script type="text/x-red" data-help-name="map">
+<p>
+TODO
+</p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('map', {
+        category: 'function',
+        defaults: {
+            name: {value:""},
+            config: {value:"", type:"map-config", required:true},
+            in: {value:"payload", validate:RED.validators.typedInput("inType")},
+            inType: {value:"msg"},
+            out: {value:"payload", validate:RED.validators.typedInput("outType")},
+            outType: {value:"msg"}
+        },
+        color:"#E2D96E",
+        inputs:1,
+        outputs:1,
+        icon: "swap.png",
+        label: function () {
+            return this.name || "Map";
+        },
+        labelStyle: function () {
+            return this.name ? "node_label_italic" : "";
+        },
+        oneditprepare: function() {
+            var that = this;
+            if (!this.in) {
+                this.in = 'payload';
+                $("#node-input-in").val("payload");
+            }
+            if (!this.inType) {
+                this.inType = 'msg';
+            }
+            $("#node-input-in").typedInput({
+                default: 'msg',
+                types: ['msg'],
+                typeField: $("#node-input-inType")
+            });
+            if (!this.out) {
+                this.out = 'payload';
+                $("#node-input-out").val("payload");
+            }
+            if (!this.outType) {
+                this.outType = 'msg';
+            }
+            $("#node-input-out").typedInput({
+                default: 'msg',
+                types: ['msg'],
+                typeField: $("#node-input-outType")
+            });
+        }
+
+    });
+</script>
