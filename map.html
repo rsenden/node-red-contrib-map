@@ -240,6 +240,7 @@ message property containing the device name.
 <script type="text/javascript">
     RED.nodes.registerType('map-map', {
         category: 'mappings',
+        paletteLabel: 'map',
         defaults: {
             name: {value:""},
             config: {value:"", type:"map-config", required:true},
@@ -404,6 +405,7 @@ id or device name.
 <script type="text/javascript">
     RED.nodes.registerType('map-set', {
         category: 'mappings',
+        paletteLabel: 'set',
         defaults: {
             name: {value:""},
             config: {value:"", type:"map-config", required:true},
@@ -552,6 +554,7 @@ outputs based on an incoming device id.
 <script type="text/javascript">
     RED.nodes.registerType('map-switch', {
         category: 'mappings',
+        paletteLabel: 'switch',
         defaults: {
             name: {value:""},
             config: {value:"", type:"map-config", required:true},
