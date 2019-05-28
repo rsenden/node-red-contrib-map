@@ -168,7 +168,7 @@ TODO
             outKeyOrValue: {value:"value", required:true},
         	caseInsensitive: {value:true},
         	forwardIfNoMatch: {value:true},
-        	defaultIfNoMatch: {value:"Unknown {{payload}}"}
+        	defaultIfNoMatch: {value:"Unknown: {{{payload}}}"}
         },
         color:"#E2D96E",
         inputs:1,
@@ -240,6 +240,18 @@ TODO
             });
             
             $("#node-input-forwardIfNoMatch").change();
+            
+            $('#node-input-in').data('prev-val', $('#node-input-in').val());
+
+            $('#node-input-in').change(function(){
+                var prev = $(this).data('prev-val');
+                var current = $(this).val();
+                var defaultIfNoMatchElt = $("#node-input-defaultIfNoMatch");
+                if (defaultIfNoMatchElt.val()==='Unknown: {{{'+prev+'}}}') {
+                	defaultIfNoMatchElt.val('Unknown: {{{'+current+'}}}');
+                }
+                $('#node-input-in').data('prev-val', current);
+            });
             
         }
 
