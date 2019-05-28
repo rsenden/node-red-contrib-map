@@ -1,10 +1,10 @@
 {
-  "name": "node-red-contrib-property-mapping",
+  "name": "node-red-contrib-mappings",
   "version": "0.0.1",
   "description": "Map property values based on configurable mapping",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/rsenden/node-red-contrib-property-mapping.git"
+    "url": "git+https://github.com/rsenden/node-red-contrib-mappings.git"
   },
   "keywords": [
     "node-red"
@@ -12,12 +12,12 @@
   "author": "Ruud Senden",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/rsenden/node-red-contrib-property-mapping/issues"
+    "url": "https://github.com/rsenden/node-red-contrib-mappings/issues"
   },
-  "homepage": "https://github.com/rsenden/node-red-contrib-property-mapping#readme",
+  "homepage": "https://github.com/rsenden/node-red-contrib-mappings#readme",
   "node-red": {
     "nodes": {
-      "property-mapping": "property-mapping.js"
+      "property-mapping": "mappings.js"
     }
   }
 }

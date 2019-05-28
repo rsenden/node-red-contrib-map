@@ -2,6 +2,8 @@ module.exports = function(RED) {
     function MapConfigNode(n) {
     	RED.nodes.createNode(this, n);
     	this.name = n.name;
+    	this.keyName = n.keyName;
+    	this.valueName = n.valueName;
     	this.mappings = n.mappings;
     	this.case = n.case;
     }

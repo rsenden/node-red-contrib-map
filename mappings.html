@@ -4,6 +4,14 @@
         <label for="node-config-input-name"><i class="icon-tag"></i> Name</label>
         <input type="text" id="node-config-input-name" placeholder="Name">
     </div>
+    <div class="form-row">
+        <label for="node-config-input-key-name"><i class="icon-tag"></i> Key Name</label>
+        <input type="text" id="node-config-input-key-name" placeholder="Key Name">
+    </div>
+	<div class="form-row">
+        <label for="node-config-input-value-name"><i class="icon-tag"></i> Value Name</label>
+        <input type="text" id="node-config-input-value-name" placeholder="Value Name">
+    </div>
     <div class="form-row node-config-input-mapping-container-row">
         <ol id="node-config-input-mapping-container"></ol>
     </div>
@@ -24,7 +32,9 @@ Configure the mappings
         category: 'config',
         defaults: {
         	name: {value:"", required:true},
-        	mappings: {value:[{in:"in", out:"out"}]},
+        	keyName: {value:"key", required:false},
+        	valueName: {value:"value", required:false},
+        	mappings: {value:[{key:"key", value:"value"}]},
         	case: {value:false}
         },
         label: function () {
@@ -34,14 +44,14 @@ Configure the mappings
             var node = this;
             $("#node-config-input-mapping-container").css('min-height','250px').css('min-width','450px').editableList({
                 addItem: function(container,i,opt) {
-                	var mapping = opt.mapping || {in:"in", out:"out"};
+                	var mapping = opt.mapping || {key:node.keyName, value:node.valueName};
                     container.css({
                         overflow: 'hidden',
                         whiteSpace: 'nowrap'
                     });
                     var row = $('<div/>').appendTo(container);
-                    var inField = $('<input/>',{class:"node-config-input-mapping-in",type:"text",style:"width:40%; margin-left: 5px;"}).appendTo(row).val(mapping.in);
-                    var outField = $('<input/>',{class:"node-config-input-mapping-out",type:"text",style:"width:40%; margin-left: 5px;"}).appendTo(row).val(mapping.out);
+                    var keyField = $('<input/>',{class:"node-config-input-mapping-key",type:"text",style:"width:40%; margin-left: 5px;"}).appendTo(row).val(mapping.key);
+                    var valueField = $('<input/>',{class:"node-config-input-mapping-value",type:"text",style:"width:40%; margin-left: 5px;"}).appendTo(row).val(mapping.value);
                     var finalspan = $('<span/>',{style:"float: right;margin-top: 6px;"}).appendTo(row);
                     finalspan.append(' &#8594; <span class="node-config-input-mapping-index">'+(i+1)+'</span> ');
                 },
@@ -70,8 +80,8 @@ Configure the mappings
                 var mappingData = $(this).data('data');
                 var mapping = $(this);
                 var r = {};
-                r.in = mapping.find(".node-config-input-mapping-in").val();
-                r.out = mapping.find(".node-config-input-mapping-out").val();
+                r.key = mapping.find(".node-config-input-mapping-key").val();
+                r.value = mapping.find(".node-config-input-mapping-value").val();
                 node.mappings.push(r);
             });
         },
@@ -120,7 +130,7 @@ TODO
 
 <script type="text/javascript">
     RED.nodes.registerType('map', {
-        category: 'function',
+        category: 'mappings',
         defaults: {
             name: {value:""},
             config: {value:"", type:"map-config", required:true},
