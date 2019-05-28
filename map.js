@@ -4,8 +4,8 @@ module.exports = function(RED) {
     function MapConfigNode(n) {
     	RED.nodes.createNode(this, n);
     	this.name = n.name;
-    	this.keyName = n.keyName;
-    	this.valueName = n.valueName;
+    	this.rhsName = n.rhsName;
+    	this.lhsName = n.lhsName;
     	this.mappings = n.mappings;
     }
     RED.nodes.registerType("map-config", MapConfigNode);
@@ -16,10 +16,10 @@ module.exports = function(RED) {
     	this.config = RED.nodes.getNode(n.config);
     	this.in = n.in;
     	this.inType = n.inType;
-    	this.inKeyOrValue = n.inKeyOrValue;
+    	this.inLhsOrRhs = n.inLhsOrRhs;
     	this.out = n.out;
     	this.outType = n.outType;
-    	this.outKeyOrValue = n.outKeyOrValue;
+    	this.outLhsOrRhs = n.outLhsOrRhs;
     	this.caseInsensitive = n.caseInsensitive;
     	this.forwardIfNoMatch = n.forwardIfNoMatch;
     	this.defaultIfNoMatch = n.defaultIfNoMatch;
@@ -27,8 +27,8 @@ module.exports = function(RED) {
     	var node = this;
     	
     	var mappings = !this.config.mappings ? [] : this.config.mappings.reduce(function(result, item) {
-    		  var key = item[node.inKeyOrValue];
-    		  var value = item[node.outKeyOrValue];
+    		  var key = item[node.inLhsOrRhs];
+    		  var value = item[node.outLhsOrRhs];
     		  if ( node.caseInsensitive ) {
     			  key = key.toLowerCase();
     		  }
@@ -67,17 +67,17 @@ module.exports = function(RED) {
     	this.from = n.from;
     	this.out = n.out;
     	this.outType = n.outType;
-    	this.outKeyOrValue = n.outKeyOrValue;
+    	this.outLhsOrRhs = n.outLhsOrRhs;
     	
     	var node = this;
     	node.on("input", function(msg) {
 
             try {
 		    	var mapping = !node.config.mappings ? null : this.config.mappings.find(function(mapping) {
-		    		return mapping.key===node.from;
+		    		return mapping.lhs===node.from;
 		    	});
 		    	if (mapping) {
-		    		RED.util.setMessageProperty(msg, node.out, mapping[node.outKeyOrValue]);
+		    		RED.util.setMessageProperty(msg, node.out, mapping[node.outLhsOrRhs]);
 		            node.send(msg);
 		    	}
             }
@@ -93,12 +93,12 @@ module.exports = function(RED) {
     	RED.nodes.createNode(this, n);
     	this.name = n.name;
     	this.config = RED.nodes.getNode(n.config);
-    	this.outKeyOrValue = n.outKeyOrValue;
+    	this.outLhsOrRhs = n.outLhsOrRhs;
     	this.in = n.in;
     	this.inType = n.inType;
-    	this.inKeyOrValue = n.inKeyOrValue;
+    	this.inLhsOrRhs = n.inLhsOrRhs;
     	this.caseInsensitive = n.caseInsensitive;
-    	this.outputKeys = n.outputKeys;
+    	this.outputLhsValues = n.outputLhsValues;
     	
     	var node = this;
     	
@@ -110,14 +110,18 @@ module.exports = function(RED) {
             	}
     			if ( inValue ) {
 	    			var mapping = node.config.mappings.find(function(mapping) {
-	    				return mapping[node.inKeyOrValue]===inValue;
+	    				var mappingValue = mapping[node.inLhsOrRhs];
+	    				if ( mappingValue && node.caseInsensitive ) {
+	                		mappingValue = mappingValue.toLowerCase();
+	                	}
+	    				return mappingValue===inValue;
 	    			});
 	    			if ( mapping ) {
-		            	var index = node.outputKeys.findIndex(function(key) {
-		            		return key===mapping.key;
+		            	var index = node.outputLhsValues.findIndex(function(outputLhsValue) {
+		            		return outputLhsValue===mapping.lhs;
 		            	});
-		            	if ( index > 0 ) {
-			            	var msgs = new Array(node.outputKeys.length);
+		            	if ( index > -1 ) {
+			            	var msgs = new Array(node.outputLhsValues.length);
 			            	msgs[index]=msg;
 			            	node.send(msgs);
 		            	}

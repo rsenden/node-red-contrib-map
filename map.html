@@ -5,12 +5,12 @@
         <input type="text" id="node-config-input-name" placeholder="Name">
     </div>
     <div class="form-row">
-        <label for="node-config-input-keyName"><i class="icon-tag"></i> Key Name</label>
-        <input type="text" id="node-config-input-keyName" placeholder="Key Name">
+        <label for="node-config-input-lhsName"><i class="icon-tag"></i> LHS Name</label>
+        <input type="text" id="node-config-input-lhsName" placeholder="Left-hand side Name">
     </div>
 	<div class="form-row">
-        <label for="node-config-input-valueName"><i class="icon-tag"></i> Value Name</label>
-        <input type="text" id="node-config-input-valueName" placeholder="Value Name">
+        <label for="node-config-input-rhsName"><i class="icon-tag"></i> RHS Name</label>
+        <input type="text" id="node-config-input-rhsName" placeholder="Right-hand side Name">
     </div>
     <div class="form-row node-config-input-mapping-container-row">
         <ol id="node-config-input-mapping-container"></ol>
@@ -30,13 +30,13 @@ configuration node:
      based flows, you could have a configuration named <i>RfxComIn</i> for mapping
      input device id's to friendly names, and a configuration named <i>RfxComOut</i>
      for mapping friendly device names to device id's.</li>
-  <li><b>Key Name</b><br/>
+  <li><b>LHS Name</b><br/>
      This property allows for configuring the name of the left-hand side of the 
      mappings. For example, if your left-hand side of the mapping contains device
      id's (for input devices), you could set this property to <i>Device id</i>. 
      Likewise, if your left-hand side contains device names (for output devices),
      you could set this property to <i>Device name</i>.</li>
-  <li><b>Value Name</b><br/>
+  <li><b>Rhs Name</b><br/>
      This property allows for configuring the name of the right-hand side of the 
      mappings. For example, if your right-hand side of the mapping contains device
      id's (for output devices), you could set this property to <i>Device id</i>. 
@@ -68,9 +68,9 @@ properties before the mapping.
         category: 'config',
         defaults: {
         	name: {value:"", required:true},
-        	keyName: {value:"key", required:true},
-        	valueName: {value:"value", required:true},
-        	mappings: {value:[{key:"key", value:"value"}]}
+        	lhsName: {value:"lhs", required:true},
+        	rhsName: {value:"rhs", required:true},
+        	mappings: {value:[{lhs:"lhs", rhs:"rhs"}]}
         },
         label: function () {
             return this.name;
@@ -79,14 +79,14 @@ properties before the mapping.
             var node = this;
             $("#node-config-input-mapping-container").css('min-height','250px').css('min-width','450px').editableList({
                 addItem: function(container,i,opt) {
-                	var mapping = opt.mapping || {key:node.keyName, value:node.valueName};
+                	var mapping = opt.mapping || {lhs:node.lhsName, rhs:node.rhsName};
                     container.css({
                         overflow: 'hidden',
                         whiteSpace: 'nowrap'
                     });
                     var row = $('<div/>').appendTo(container);
-                    var keyField = $('<input/>',{class:"node-config-input-mapping-key",type:"text",style:"width:40%; margin-left: 5px;"}).appendTo(row).val(mapping.key);
-                    var valueField = $('<input/>',{class:"node-config-input-mapping-value",type:"text",style:"width:40%; margin-left: 5px;"}).appendTo(row).val(mapping.value);
+                    var lhsField = $('<input/>',{class:"node-config-input-mapping-lhs",type:"text",style:"width:40%; margin-left: 5px;"}).appendTo(row).val(mapping.lhs);
+                    var rhsField = $('<input/>',{class:"node-config-input-mapping-rhs",type:"text",style:"width:40%; margin-left: 5px;"}).appendTo(row).val(mapping.rhs);
                     var finalspan = $('<span/>',{style:"float: right;margin-top: 6px;"}).appendTo(row);
                     finalspan.append(' &#8594; <span class="node-config-input-mapping-index">'+(i+1)+'</span> ');
                 },
@@ -113,8 +113,8 @@ properties before the mapping.
             mappings.each(function(i) {
                 var mapping = $(this);
                 var r = {};
-                r.key = mapping.find(".node-config-input-mapping-key").val();
-                r.value = mapping.find(".node-config-input-mapping-value").val();
+                r.lhs = mapping.find(".node-config-input-mapping-lhs").val();
+                r.rhs = mapping.find(".node-config-input-mapping-rhs").val();
                 node.mappings.push(r);
             });
         },
@@ -146,10 +146,10 @@ properties before the mapping.
     </div>
     <hr/>
 	<div class="form-row">
-        <label for="node-input-inKeyOrValue"><i class="fa fa-ellipsis-h"></i> Get</label>
-		<select id="node-input-inKeyOrValue">
-            <option value="key">key</option>
-            <option value="value">value</option>
+        <label for="node-input-inLhsOrRhs"><i class="fa fa-ellipsis-h"></i> Get</label>
+		<select id="node-input-inLhsOrRhs">
+            <option value="lhs">lhs</option>
+            <option value="rhs">rhs</option>
         </select>
 	</div>
 	<div class="form-row">
@@ -159,10 +159,10 @@ properties before the mapping.
     </div>
     <hr/>
 	<div class="form-row">
-        <label for="node-input-outKeyOrValue"><i class="fa fa-ellipsis-h"></i> Set</label>
-		<select id="node-input-outKeyOrValue" style="background: #eee;cursor:no-drop;">
-            <option style="display:none" value="key">key</option>
-            <option style="display:none" value="value">value</option>
+        <label for="node-input-outLhsOrRhs"><i class="fa fa-ellipsis-h"></i> Set</label>
+		<select id="node-input-outLhsOrRhs" style="background: #eee;cursor:no-drop;">
+            <option style="display:none" value="lhs">lhs</option>
+            <option style="display:none" value="rhs">rhs</option>
         </select>
 	</div>
 	<div class="form-row">
@@ -202,7 +202,7 @@ message property containing the device name.
   <li><b>Get</b><br/>
      This property allows for configuring whether the input property contains values
      from the left-hand side of the configured mapping, or from the right-hand side.
-     The options in this select box show the <i>keyName</i> and <i>valueName</i> as 
+     The options in this select box show the <i>LHS Name</i> and <i>RHS Name</i> as 
      defined in the mapping configuration, for example allowing you to select whether 
      the configured input property contains a 'device id' or 'device name'.</li>
   <li><b>From</b><br/>
@@ -246,10 +246,10 @@ message property containing the device name.
             config: {value:"", type:"map-config", required:true},
             in: {value:"payload", validate:RED.validators.typedInput("inType"), required:true},
             inType: {value:"msg", required:true},
-            inKeyOrValue: {value:"key", required:true},
+            inLhsOrRhs: {value:"lhs", required:true},
             out: {value:"payload", validate:RED.validators.typedInput("outType"), required:true},
             outType: {value:"msg", required:true},
-            outKeyOrValue: {value:"value", required:true},
+            outLhsOrRhs: {value:"rhs", required:true},
         	caseInsensitive: {value:true},
         	forwardIfNoMatch: {value:true},
         	defaultIfNoMatch: {value:"Unknown: {{{payload}}}"}
@@ -273,12 +273,12 @@ message property containing the device name.
             if (!node.inType) {
                 node.inType = 'msg';
             }
-            if (!node.inKeyOrValue) {
-            	node.inKeyOrValue = 'key';
+            if (!node.inLhsOrRhs) {
+            	node.inLhsOrRhs = 'lhs';
             }
             
-            $('#node-input-inKeyOrValue').change(function() {
-            	$('#node-input-outKeyOrValue').val( $(this).val()==='value' ? 'key' : 'value' );
+            $('#node-input-inLhsOrRhs').change(function() {
+            	$('#node-input-outLhsOrRhs').val( $(this).val()==='rhs' ? 'lhs' : 'rhs' );
             });
             
             $("#node-input-in").typedInput({
@@ -293,8 +293,8 @@ message property containing the device name.
             if (!node.outType) {
                 node.outType = 'msg';
             }
-            if (!node.outKeyOrValue) {
-            	node.outKeyOrValue = node.inKeyOrValue==='value' ? 'key' : 'value';
+            if (!node.outLhsOrRhs) {
+            	node.outLhsOrRhs = node.inLhsOrRhs==='rhs' ? 'lhs' : 'rhs';
             }
             
             $("#node-input-out").typedInput({
@@ -306,10 +306,10 @@ message property containing the device name.
             $("#node-input-config").change(function() {
             	var config = RED.nodes.node($(this).val());
             	if (config) {
-	            	$('#node-input-inKeyOrValue option[value="key"]').text(config.keyName);
-	                $('#node-input-inKeyOrValue option[value="value"]').text(config.valueName);
-	                $('#node-input-outKeyOrValue option[value="key"]').text(config.keyName);
-	                $('#node-input-outKeyOrValue option[value="value"]').text(config.valueName);
+	            	$('#node-input-inLhsOrRhs option[value="lhs"]').text(config.lhsName);
+	                $('#node-input-inLhsOrRhs option[value="rhs"]').text(config.rhsName);
+	                $('#node-input-outLhsOrRhs option[value="lhs"]').text(config.lhsName);
+	                $('#node-input-outLhsOrRhs option[value="rhs"]').text(config.rhsName);
             	}
             });
             
@@ -361,10 +361,10 @@ message property containing the device name.
         <select id="node-input-from" style="width:250px;"/>
     </div>
 	<div class="form-row">
-        <label for="node-input-outKeyOrValue"><i class="fa fa-ellipsis-h"></i> Set</label>
-		<select id="node-input-outKeyOrValue" style="width:250px;">
-            <option value="key">key</option>
-            <option value="value">value</option>
+        <label for="node-input-outLhsOrRhs"><i class="fa fa-ellipsis-h"></i> Set</label>
+		<select id="node-input-outLhsOrRhs" style="width:250px;">
+            <option value="lhs">lhs</option>
+            <option value="rhs">rhs</option>
         </select>
 	</div>
 	<div class="form-row">
@@ -412,7 +412,7 @@ id or device name.
             from: {value:"", required:true},
             out: {value:"payload", validate:RED.validators.typedInput("outType"), required:true},
             outType: {value:"msg", required:true},
-            outKeyOrValue: {value:"value", required:true}
+            outLhsOrRhs: {value:"rhs", required:true}
         },
         color:"#E2D96E",
         inputs:1,
@@ -434,8 +434,8 @@ id or device name.
             if (!node.outType) {
                 node.outType = 'msg';
             }
-            if (!node.outKeyOrValue) {
-            	node.outKeyOrValue = 'value';
+            if (!node.outLhsOrRhs) {
+            	node.outLhsOrRhs = 'rhs';
             }
             
             $("#node-input-out").typedInput({
@@ -449,12 +449,12 @@ id or device name.
             	var $mySelect = $('#node-input-from');
             	$mySelect.children().remove().end()
             	if (config) {
-            		$('#node-input-outKeyOrValue option[value="key"]').text(config.keyName);
- 	                $('#node-input-outKeyOrValue option[value="value"]').text(config.valueName);
+            		$('#node-input-outLhsOrRhs option[value="lhs"]').text(config.lhsName);
+ 	                $('#node-input-outLhsOrRhs option[value="rhs"]').text(config.rhsName);
          			$.each(config.mappings, function(i, mapping) {
 	         			var $option = $("<option/>", {
-	         			    value: mapping.key,
-	         			    text: mapping.key+' - '+mapping.value
+	         			    value: mapping.lhs,
+	         			    text: mapping.lhs+' - '+mapping.rhs
 	         			});
 	         			$mySelect.append($option);
          			});
@@ -483,10 +483,10 @@ id or device name.
     </div>
 	<hr/>
 	<div class="form-row">
-        <label for="node-input-inKeyOrValue"><i class="fa fa-ellipsis-h"></i> Get</label>
-		<select id="node-input-inKeyOrValue">
-            <option value="key">key</option>
-            <option value="value">value</option>
+        <label for="node-input-inLhsOrRhs"><i class="fa fa-ellipsis-h"></i> Get</label>
+		<select id="node-input-inLhsOrRhs">
+            <option value="lhs">lhs</option>
+            <option value="rhs">rhs</option>
         </select>
 	</div>
 	<div class="form-row">
@@ -496,10 +496,10 @@ id or device name.
     </div>
     <hr/>
 	<div class="form-row">
-        <label for="node-input-outKeyOrValue"><i class="fa fa-ellipsis-h"></i> Output Name</label>
-		<select id="node-input-outKeyOrValue">
-            <option value="key">key</option>
-            <option value="value">value</option>
+        <label for="node-input-outLhsOrRhs"><i class="fa fa-ellipsis-h"></i> Output Name</label>
+		<select id="node-input-outLhsOrRhs">
+            <option value="lhs">lhs</option>
+            <option value="rhs">rhs</option>
         </select>
 	</div>
     <hr/>
@@ -528,7 +528,7 @@ outputs based on an incoming device id.
   <li><b>Get</b><br/>
      This property allows for configuring whether the input property contains values
      from the left-hand side of the configured mapping, or from the right-hand side.
-     The options in this select box show the <i>keyName</i> and <i>valueName</i> as 
+     The options in this select box show the <i>LHS Name</i> and <i>RHS Name</i> as 
      defined in the mapping configuration, for example allowing you to select whether 
      the configured input property contains a 'device id' or 'device name'.</li>
   <li><b>From</b><br/>
@@ -558,12 +558,12 @@ outputs based on an incoming device id.
         defaults: {
             name: {value:""},
             config: {value:"", type:"map-config", required:true},
-            outKeyOrValue: {value:"value", required:true},
+            outLhsOrRhs: {value:"rhs", required:true},
             in: {value:"payload", validate:RED.validators.typedInput("inType"), required:true},
             inType: {value:"msg", required:true},
-            inKeyOrValue: {value:"key", required:true},
+            inLhsOrRhs: {value:"lhs", required:true},
             caseInsensitive: {value:true},
-            outputKeys: {value:[]},
+            outputLhsValues: {value:[]},
             outputs: {value:1}
         },
         color:"#E2D96E",
@@ -586,8 +586,8 @@ outputs based on an incoming device id.
             if (!node.inType) {
                 node.inType = 'msg';
             }
-            if (!node.inKeyOrValue) {
-            	node.inKeyOrValue = 'key';
+            if (!node.inLhsOrRhs) {
+            	node.inLhsOrRhs = 'lhs';
             }
             
             $("#node-input-in").typedInput({
@@ -595,8 +595,8 @@ outputs based on an incoming device id.
                 types: ['msg'],
                 typeField: $("#node-input-inType")
             });
-            if (!node.outKeyOrValue) {
-            	node.outKeyOrValue = 'value';
+            if (!node.outLhsOrRhs) {
+            	node.outLhsOrRhs = 'rhs';
             }
             
             $("#node-input-out").typedInput({
@@ -618,8 +618,8 @@ outputs based on an incoming device id.
                     var select = $('<select/>',{class:"node-input-switch-select",type:"text",style:"width:80%; margin-left: 5px;"}).appendTo(row);
                     $.each(mappings, function(i, mapping) {
 	         			var $option = $("<option/>", {
-	         			    value: mapping.key,
-	         			    text: mapping.key+' - '+mapping.value,
+	         			    value: mapping.lhs,
+	         			    text: mapping.lhs+' - '+mapping.rhs,
 	         			});
 	         			select.append($option);
          			});
@@ -652,16 +652,16 @@ outputs based on an incoming device id.
             $("#node-input-config").change(function() {
             	var config = RED.nodes.node($(this).val());
             	if (config) {
-	            	$('#node-input-inKeyOrValue option[value="key"]').text(config.keyName);
-	                $('#node-input-inKeyOrValue option[value="value"]').text(config.valueName);
-	                $('#node-input-outKeyOrValue option[value="key"]').text(config.keyName);
-	                $('#node-input-outKeyOrValue option[value="value"]').text(config.valueName);
+	            	$('#node-input-inLhsOrRhs option[value="lhs"]').text(config.lhsName);
+	                $('#node-input-inLhsOrRhs option[value="rhs"]').text(config.rhsName);
+	                $('#node-input-outLhsOrRhs option[value="lhs"]').text(config.lhsName);
+	                $('#node-input-outLhsOrRhs option[value="rhs"]').text(config.rhsName);
 	                
-	                if (node.outputKeys) {
+	                if (node.outputLhsValues) {
 	                	var container = $("#node-input-switch-container");
 	                	container.editableList('empty');
-	    	            for (var i=0;i<node.outputKeys.length;i++) {
-	    	                var output = node.outputKeys[i];
+	    	            for (var i=0;i<node.outputLhsValues.length;i++) {
+	    	                var output = node.outputLhsValues[i];
 	    	                container.editableList('addItem',{output:output,i:i});
 	    	            }
 	            	}
@@ -673,10 +673,10 @@ outputs based on an incoming device id.
         oneditsave: function() {
             var outputsContainer = $("#node-input-switch-container").editableList('items');
             var node = this;
-            node.outputKeys = [];
+            node.outputLhsValues = [];
             outputsContainer.each(function(i) {
                 var value = $(this).find(".node-input-switch-select").val();
-                node.outputKeys.push(value);
+                node.outputLhsValues.push(value);
             });
         },
         oneditresize: function(size) {
@@ -691,16 +691,16 @@ outputs based on an incoming device id.
         },
         outputLabels: function(index) {
         	var node = this;
-            var outputKey = node.outputKeys[index];
+            var outputLhsValue = node.outputLhsValues[index];
             var label = "";
-            if (outputKey) {
+            if (outputLhsValue) {
             	var config = RED.nodes.node(node.config);
             	var mappings = config.mappings || [];
             	var mapping = mappings.find(function(mapping) {
-		    		return mapping.key===outputKey;
+		    		return mapping.lhs===outputLhsValue;
 		    	});
 		    	if (mapping) {
-            		label = mapping[this.outKeyOrValue];
+            		label = mapping[this.outLhsOrRhs];
 		    	}
                 return label;
             }
