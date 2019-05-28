@@ -1,16 +1,16 @@
 <!-- This is the config node for the mappings -->
-<script type="text/x-red" data-template-name="map-config">
+<script type="text/x-red" data-template-name="mappings-config">
 	<div class="form-row">
         <label for="node-config-input-name"><i class="icon-tag"></i> Name</label>
         <input type="text" id="node-config-input-name" placeholder="Name">
     </div>
     <div class="form-row">
-        <label for="node-config-input-key-name"><i class="icon-tag"></i> Key Name</label>
-        <input type="text" id="node-config-input-key-name" placeholder="Key Name">
+        <label for="node-config-input-keyName"><i class="icon-tag"></i> Key Name</label>
+        <input type="text" id="node-config-input-keyName" placeholder="Key Name">
     </div>
 	<div class="form-row">
-        <label for="node-config-input-value-name"><i class="icon-tag"></i> Value Name</label>
-        <input type="text" id="node-config-input-value-name" placeholder="Value Name">
+        <label for="node-config-input-valueName"><i class="icon-tag"></i> Value Name</label>
+        <input type="text" id="node-config-input-valueName" placeholder="Value Name">
     </div>
     <div class="form-row node-config-input-mapping-container-row">
         <ol id="node-config-input-mapping-container"></ol>
@@ -21,19 +21,19 @@
     </div>
 </script>
 
-<script type="text/x-red" data-help-name="map-config">
+<script type="text/x-red" data-help-name="mappings-config">
 <p>
 Configure the mappings
 </p>
 </script>
 
 <script type="text/javascript">
-    RED.nodes.registerType('map-config', {
+    RED.nodes.registerType('mappings-config', {
         category: 'config',
         defaults: {
         	name: {value:"", required:true},
-        	keyName: {value:"key", required:false},
-        	valueName: {value:"value", required:false},
+        	keyName: {value:"key", required:true},
+        	valueName: {value:"value", required:true},
         	mappings: {value:[{key:"key", value:"value"}]},
         	case: {value:false}
         },
@@ -99,8 +99,10 @@ Configure the mappings
 </script>
 
 
+
+
 <!-- This node allows for mapping message properties -->
-<script type="text/x-red" data-template-name="map">
+<script type="text/x-red" data-template-name="mappings-map">
 	<div class="form-row">
         <label for="node-input-name"><i class="icon-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
@@ -109,35 +111,54 @@ Configure the mappings
         <label for="node-input-config"><i class="icon-bullhorn"></i> Mapping</label>
         <input type="text" id="node-input-config">
     </div>
+    <hr/>
 	<div class="form-row">
-        <label for="node-input-in"><i class="fa fa-ellipsis-h"></i> In Property</label>
+        <label for="node-input-inKeyOrValue"><i class="fa fa-ellipsis-h"></i> Get</label>
+		<select id="node-input-inKeyOrValue" style="width:250px;">
+            <option value="key">key</option>
+            <option value="value">value</option>
+        </select>
+	</div>
+	<div class="form-row">
+		<label for="node-input-in"><i class="fa fa-ellipsis-h"></i> From</label>
         <input type="text" id="node-input-in" placeholder="payload" style="width:250px;">
         <input type="hidden" id="node-input-inType">
     </div>
+    <hr/>
 	<div class="form-row">
-        <label for="node-input-out"><i class="fa fa-ellipsis-h"></i> Out Property</label>
+        <label for="node-input-outKeyOrValue"><i class="fa fa-ellipsis-h"></i> Set</label>
+		<select id="node-input-outKeyOrValue" style="width:250px;background: #eee;cursor:no-drop;">
+            <option style="display:none" value="key">key</option>
+            <option style="display:none" value="value">value</option>
+        </select>
+	</div>
+	<div class="form-row">
+		<label for="node-input-out"><i class="fa fa-ellipsis-h"></i> On</label>
         <input type="text" id="node-input-out" placeholder="payload" style="width:250px;">
         <input type="hidden" id="node-input-outType">
+    </div>
     </div>
 </script>
 
 <!-- Help text for map -->
-<script type="text/x-red" data-help-name="map">
+<script type="text/x-red" data-help-name="mappings-map">
 <p>
 TODO
 </p>
 </script>
 
 <script type="text/javascript">
-    RED.nodes.registerType('map', {
+    RED.nodes.registerType('mappings-map', {
         category: 'mappings',
         defaults: {
             name: {value:""},
-            config: {value:"", type:"map-config", required:true},
+            config: {value:"", type:"mappings-config", required:true},
             in: {value:"payload", validate:RED.validators.typedInput("inType")},
             inType: {value:"msg"},
+            inKeyOrValue: {value:"key"},
             out: {value:"payload", validate:RED.validators.typedInput("outType")},
-            outType: {value:"msg"}
+            outType: {value:"msg"},
+            outKeyOrValue: {value:"value"}
         },
         color:"#E2D96E",
         inputs:1,
@@ -158,6 +179,17 @@ TODO
             if (!this.inType) {
                 this.inType = 'msg';
             }
+            if (!this.inKeyOrValue) {
+            	this.inKeyOrValue = 'key';
+            }
+            // TODO This doesn't work yet, seems to take default values from config
+            $('#node-input-inKeyOrValue option[value="key"]').text(this.config.keyName);
+            $('#node-input-inKeyOrValue option[value="value"]').text(this.config.valueName);
+            
+            $('#node-input-inKeyOrValue').change(function() {
+            	$('#node-input-outKeyOrValue').val( $(this).val()==='value' ? 'key' : 'value' );
+            });
+            
             $("#node-input-in").typedInput({
                 default: 'msg',
                 types: ['msg'],
@@ -170,6 +202,13 @@ TODO
             if (!this.outType) {
                 this.outType = 'msg';
             }
+            if (!this.outKeyOrValue) {
+            	this.outKeyOrValue = this.inKeyOrValue==='value' ? 'key' : 'value';
+            }
+            // TODO This doesn't work yet, seems to take default values from config
+            $('#node-input-outKeyOrValue option[value="key"]').text(this.config.keyName);
+            $('#node-input-outKeyOrValue option[value="value"]').text(this.config.valueName);
+            
             $("#node-input-out").typedInput({
                 default: 'msg',
                 types: ['msg'],

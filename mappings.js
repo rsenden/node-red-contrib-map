@@ -1,5 +1,5 @@
 module.exports = function(RED) {
-    function MapConfigNode(n) {
+    function MappingsConfigNode(n) {
     	RED.nodes.createNode(this, n);
     	this.name = n.name;
     	this.keyName = n.keyName;
@@ -7,21 +7,23 @@ module.exports = function(RED) {
     	this.mappings = n.mappings;
     	this.case = n.case;
     }
-    RED.nodes.registerType("map-config", MapConfigNode);
+    RED.nodes.registerType("mappings-config", MappingsConfigNode);
     
-    function MapNode(n) {
+    function MappingsMapNode(n) {
     	RED.nodes.createNode(this, n);
     	this.name = n.name;
     	this.config = RED.nodes.getNode(n.config);
     	this.in = n.in;
     	this.inType = n.inType;
+    	this.inKeyOrValue = n.inKeyOrValue;
     	this.out = n.out;
     	this.outType = n.outType;
+    	this.outKeyOrValue = n.outKeyOrValue;
     	
     	var node = this;
     	
     	var mappings = !this.config.mappings ? [] : this.config.mappings.reduce(function(result, item) {
-    		  result[item.in] = item.out;
+    		  result[item[node.inKeyOrValue]] = item[node.outKeyOrValue];
     		  return result;
     		}, {});
     	
@@ -41,5 +43,5 @@ module.exports = function(RED) {
         });
     	
     }
-    RED.nodes.registerType("map", MapNode);
+    RED.nodes.registerType("mappings-map", MappingsMapNode);
 }
