@@ -15,10 +15,6 @@
     <div class="form-row node-config-input-mapping-container-row">
         <ol id="node-config-input-mapping-container"></ol>
     </div>
-    <div class="form-row">
-        <label for="node-config-input-case"><i class="fa fa-tag"></i> ignore case</label>
-        <input type="checkbox" id="node-config-input-case" data-i18n="ignore case">
-    </div>
 </script>
 
 <script type="text/x-red" data-help-name="mappings-config">
@@ -34,8 +30,7 @@ Configure the mappings
         	name: {value:"", required:true},
         	keyName: {value:"key", required:true},
         	valueName: {value:"value", required:true},
-        	mappings: {value:[{key:"key", value:"value"}]},
-        	case: {value:false}
+        	mappings: {value:[{key:"key", value:"value"}]}
         },
         label: function () {
             return this.name;
@@ -137,6 +132,11 @@ Configure the mappings
         <input type="text" id="node-input-out" placeholder="payload" style="width:250px;">
         <input type="hidden" id="node-input-outType">
     </div>
+	<hr/>
+	<div class="form-row">
+        <label for="node-input-caseInsensitive"><i class="fa fa-tag"></i> Ignore Case</label>
+        <input type="checkbox" id="node-input-caseInsensitive">
+    </div>
 </script>
 
 <!-- Help text for map -->
@@ -157,7 +157,8 @@ TODO
             inKeyOrValue: {value:"key", required:true},
             out: {value:"payload", validate:RED.validators.typedInput("outType"), required:true},
             outType: {value:"msg", required:true},
-            outKeyOrValue: {value:"value", required:true}
+            outKeyOrValue: {value:"value", required:true},
+        	caseInsensitive: {value:true}
         },
         color:"#E2D96E",
         inputs:1,

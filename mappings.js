@@ -5,7 +5,6 @@ module.exports = function(RED) {
     	this.keyName = n.keyName;
     	this.valueName = n.valueName;
     	this.mappings = n.mappings;
-    	this.case = n.case;
     }
     RED.nodes.registerType("mappings-config", MappingsConfigNode);
     
@@ -19,11 +18,17 @@ module.exports = function(RED) {
     	this.out = n.out;
     	this.outType = n.outType;
     	this.outKeyOrValue = n.outKeyOrValue;
+    	this.caseInsensitive = n.caseInsensitive;
     	
     	var node = this;
     	
     	var mappings = !this.config.mappings ? [] : this.config.mappings.reduce(function(result, item) {
-    		  result[item[node.inKeyOrValue]] = item[node.outKeyOrValue];
+    		  var key = item[node.inKeyOrValue];
+    		  var value = item[node.outKeyOrValue];
+    		  if ( node.caseInsensitive ) {
+    			  key = key.toLowerCase();
+    		  }
+    		  result[key] = value;
     		  return result;
     		}, {});
     	
@@ -31,6 +36,9 @@ module.exports = function(RED) {
 
             try {
             	var inValue = RED.util.getMessageProperty(msg, node.in);
+            	if ( node.caseInsensitive ) {
+            		inValue = inValue.toLowerCase();
+            	}
             	// TODO Make the default out value configurable
             	// TODO Add config property to ignore message if no match
             	var outValue = mappings[inValue] || 'Unknown ('+inValue+')';
