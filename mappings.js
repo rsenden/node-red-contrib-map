@@ -44,4 +44,33 @@ module.exports = function(RED) {
     	
     }
     RED.nodes.registerType("mappings-map", MappingsMapNode);
+    
+    function MappingsSetNode(n) {
+    	RED.nodes.createNode(this, n);
+    	this.name = n.name;
+    	this.config = RED.nodes.getNode(n.config);
+    	this.from = n.from;
+    	this.out = n.out;
+    	this.outType = n.outType;
+    	this.outKeyOrValue = n.outKeyOrValue;
+    	
+    	var node = this;
+    	node.on("input", function(msg) {
+
+            try {
+		    	var mapping = !node.config.mappings ? null : this.config.mappings.find(function(mapping) {
+		    		return mapping.key===node.from;
+		    	});
+		    	if (mapping) {
+		    		RED.util.setMessageProperty(msg, node.out, mapping[node.outKeyOrValue]);
+		            node.send(msg);
+		    	}
+            }
+            catch(err) {
+                node.error(err.message, msg);
+            }
+    	});
+		    
+    }
+    RED.nodes.registerType("mappings-set", MappingsSetNode);
 }

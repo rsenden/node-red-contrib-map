@@ -137,7 +137,6 @@ Configure the mappings
         <input type="text" id="node-input-out" placeholder="payload" style="width:250px;">
         <input type="hidden" id="node-input-outType">
     </div>
-    </div>
 </script>
 
 <!-- Help text for map -->
@@ -153,12 +152,12 @@ TODO
         defaults: {
             name: {value:""},
             config: {value:"", type:"mappings-config", required:true},
-            in: {value:"payload", validate:RED.validators.typedInput("inType")},
-            inType: {value:"msg"},
-            inKeyOrValue: {value:"key"},
-            out: {value:"payload", validate:RED.validators.typedInput("outType")},
-            outType: {value:"msg"},
-            outKeyOrValue: {value:"value"}
+            in: {value:"payload", validate:RED.validators.typedInput("inType"), required:true},
+            inType: {value:"msg", required:true},
+            inKeyOrValue: {value:"key", required:true},
+            out: {value:"payload", validate:RED.validators.typedInput("outType"), required:true},
+            outType: {value:"msg", required:true},
+            outKeyOrValue: {value:"value", required:true}
         },
         color:"#E2D96E",
         inputs:1,
@@ -171,20 +170,17 @@ TODO
             return this.name ? "node_label_italic" : "";
         },
         oneditprepare: function() {
-            var that = this;
-            if (!this.in) {
-                this.in = 'payload';
+        	var node = this;
+            if (!node.in) {
+                node.in = 'payload';
                 $("#node-input-in").val("payload");
             }
-            if (!this.inType) {
-                this.inType = 'msg';
+            if (!node.inType) {
+                node.inType = 'msg';
             }
-            if (!this.inKeyOrValue) {
-            	this.inKeyOrValue = 'key';
+            if (!node.inKeyOrValue) {
+            	node.inKeyOrValue = 'key';
             }
-            // TODO This doesn't work yet, seems to take default values from config
-            $('#node-input-inKeyOrValue option[value="key"]').text(this.config.keyName);
-            $('#node-input-inKeyOrValue option[value="value"]').text(this.config.valueName);
             
             $('#node-input-inKeyOrValue').change(function() {
             	$('#node-input-outKeyOrValue').val( $(this).val()==='value' ? 'key' : 'value' );
@@ -195,25 +191,139 @@ TODO
                 types: ['msg'],
                 typeField: $("#node-input-inType")
             });
-            if (!this.out) {
-                this.out = 'payload';
+            if (!node.out) {
+                node.out = 'payload';
                 $("#node-input-out").val("payload");
             }
-            if (!this.outType) {
-                this.outType = 'msg';
+            if (!node.outType) {
+                node.outType = 'msg';
             }
-            if (!this.outKeyOrValue) {
-            	this.outKeyOrValue = this.inKeyOrValue==='value' ? 'key' : 'value';
+            if (!node.outKeyOrValue) {
+            	node.outKeyOrValue = node.inKeyOrValue==='value' ? 'key' : 'value';
             }
-            // TODO This doesn't work yet, seems to take default values from config
-            $('#node-input-outKeyOrValue option[value="key"]').text(this.config.keyName);
-            $('#node-input-outKeyOrValue option[value="value"]').text(this.config.valueName);
             
             $("#node-input-out").typedInput({
                 default: 'msg',
                 types: ['msg'],
                 typeField: $("#node-input-outType")
             });
+            
+            $("#node-input-config").change(function() {
+            	var config = RED.nodes.node($(this).val());
+            	if (config) {
+	            	$('#node-input-inKeyOrValue option[value="key"]').text(config.keyName);
+	                $('#node-input-inKeyOrValue option[value="value"]').text(config.valueName);
+	                $('#node-input-outKeyOrValue option[value="key"]').text(config.keyName);
+	                $('#node-input-outKeyOrValue option[value="value"]').text(config.valueName);
+            	}
+            });
+            
+            $("#node-input-config").change();
+            
+        }
+
+    });
+</script>
+
+
+
+
+<!-- This node allows for setting a message property based on a given mapping -->
+<script type="text/x-red" data-template-name="mappings-set">
+	<div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+    </div>
+    <div class="form-row node-input-config">
+        <label for="node-input-config"><i class="icon-bullhorn"></i> Mapping</label>
+        <input type="text" id="node-input-config">
+    </div>
+    <hr/>
+	<div class="form-row">
+		<label for="node-input-from"><i class="fa fa-ellipsis-h"></i> From</label>
+        <select id="node-input-from" style="width:250px;"/>
+    </div>
+	<div class="form-row">
+        <label for="node-input-outKeyOrValue"><i class="fa fa-ellipsis-h"></i> Set</label>
+		<select id="node-input-outKeyOrValue" style="width:250px;">
+            <option value="key">key</option>
+            <option value="value">value</option>
+        </select>
+	</div>
+	<div class="form-row">
+		<label for="node-input-out"><i class="fa fa-ellipsis-h"></i> On</label>
+        <input type="text" id="node-input-out" placeholder="payload" style="width:250px;">
+        <input type="hidden" id="node-input-outType">
+    </div>
+</script>
+
+<!-- Help text for map -->
+<script type="text/x-red" data-help-name="mappings-set">
+<p>
+TODO
+</p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('mappings-set', {
+        category: 'mappings',
+        defaults: {
+            name: {value:""},
+            config: {value:"", type:"mappings-config", required:true},
+            from: {value:"", required:true},
+            out: {value:"payload", validate:RED.validators.typedInput("outType"), required:true},
+            outType: {value:"msg", required:true},
+            outKeyOrValue: {value:"value", required:true}
+        },
+        color:"#E2D96E",
+        inputs:1,
+        outputs:1,
+        icon: "swap.png",
+        label: function () {
+            return this.name || "Set";
+        },
+        labelStyle: function () {
+            return this.name ? "node_label_italic" : "";
+        },
+        oneditprepare: function() {
+        	var node = this;
+            
+            if (!node.out) {
+                node.out = 'payload';
+                $("#node-input-out").val("payload");
+            }
+            if (!node.outType) {
+                node.outType = 'msg';
+            }
+            if (!node.outKeyOrValue) {
+            	node.outKeyOrValue = 'value';
+            }
+            
+            $("#node-input-out").typedInput({
+                default: 'msg',
+                types: ['msg'],
+                typeField: $("#node-input-outType")
+            });
+            
+            $("#node-input-config").change(function() {
+            	var config = RED.nodes.node($(this).val());
+            	var $mySelect = $('#node-input-from');
+            	$mySelect.children().remove().end()
+            	if (config) {
+            		$('#node-input-outKeyOrValue option[value="key"]').text(config.keyName);
+ 	                $('#node-input-outKeyOrValue option[value="value"]').text(config.valueName);
+         			$.each(config.mappings, function(i, mapping) {
+	         			var $option = $("<option/>", {
+	         			    value: mapping.key,
+	         			    text: mapping.key+' - '+mapping.value
+	         			});
+	         			$mySelect.append($option);
+         			});
+            	}
+            });
+            
+            $("#node-input-config").change();
+            
         }
 
     });
