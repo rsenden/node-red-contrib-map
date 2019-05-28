@@ -1,4 +1,6 @@
 module.exports = function(RED) {
+	var mustache = require("mustache");
+	
     function MappingsConfigNode(n) {
     	RED.nodes.createNode(this, n);
     	this.name = n.name;
@@ -19,6 +21,8 @@ module.exports = function(RED) {
     	this.outType = n.outType;
     	this.outKeyOrValue = n.outKeyOrValue;
     	this.caseInsensitive = n.caseInsensitive;
+    	this.forwardIfNoMatch = n.forwardIfNoMatch;
+    	this.defaultIfNoMatch = n.defaultIfNoMatch;
     	
     	var node = this;
     	
@@ -39,11 +43,14 @@ module.exports = function(RED) {
             	if ( node.caseInsensitive ) {
             		inValue = inValue.toLowerCase();
             	}
-            	// TODO Make the default out value configurable
-            	// TODO Add config property to ignore message if no match
-            	var outValue = mappings[inValue] || 'Unknown ('+inValue+')';
-            	RED.util.setMessageProperty(msg, node.out, outValue);
-                node.send(msg);
+            	var outValue = mappings[inValue];
+            	if ( !outValue && node.forwardIfNoMatch ) {
+            		outValue = mustache.render(node.defaultIfNoMatch, msg);
+            	}
+            	if ( outValue ) {
+            		RED.util.setMessageProperty(msg, node.out, outValue);
+            		node.send(msg);
+            	}
             }
             catch(err) {
                 node.error(err.message, msg);

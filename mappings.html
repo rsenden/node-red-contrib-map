@@ -109,33 +109,41 @@ Configure the mappings
     <hr/>
 	<div class="form-row">
         <label for="node-input-inKeyOrValue"><i class="fa fa-ellipsis-h"></i> Get</label>
-		<select id="node-input-inKeyOrValue" style="width:250px;">
+		<select id="node-input-inKeyOrValue">
             <option value="key">key</option>
             <option value="value">value</option>
         </select>
 	</div>
 	<div class="form-row">
 		<label for="node-input-in"><i class="fa fa-ellipsis-h"></i> From</label>
-        <input type="text" id="node-input-in" placeholder="payload" style="width:250px;">
+        <input type="text" id="node-input-in" placeholder="payload">
         <input type="hidden" id="node-input-inType">
     </div>
     <hr/>
 	<div class="form-row">
         <label for="node-input-outKeyOrValue"><i class="fa fa-ellipsis-h"></i> Set</label>
-		<select id="node-input-outKeyOrValue" style="width:250px;background: #eee;cursor:no-drop;">
+		<select id="node-input-outKeyOrValue" style="background: #eee;cursor:no-drop;">
             <option style="display:none" value="key">key</option>
             <option style="display:none" value="value">value</option>
         </select>
 	</div>
 	<div class="form-row">
 		<label for="node-input-out"><i class="fa fa-ellipsis-h"></i> On</label>
-        <input type="text" id="node-input-out" placeholder="payload" style="width:250px;">
+        <input type="text" id="node-input-out" placeholder="payload">
         <input type="hidden" id="node-input-outType">
     </div>
 	<hr/>
 	<div class="form-row">
-        <label for="node-input-caseInsensitive"><i class="fa fa-tag"></i> Ignore Case</label>
-        <input type="checkbox" id="node-input-caseInsensitive">
+        <input type="checkbox" id="node-input-caseInsensitive" style="display: inline-block; width: auto; vertical-align: top;">
+		<label for="node-input-caseInsensitive" style="width:90%"><i class="fa fa-tag"></i> Ignore Case</label>
+    </div>
+	<div class="form-row">
+        <input type="checkbox" id="node-input-forwardIfNoMatch" style="display: inline-block; width: auto; vertical-align: top;">
+		<label for="node-input-forwardIfNoMatch" style="width:90%"><i class="fa fa-tag"></i> Forward message if no matching mapping is found</label>
+    </div>
+	<div class="form-row" id="row-defaultIfNoMatch">
+        <label for="node-input-defaultIfNoMatch" style="padding-left:20px"><i class="icon-bullhorn"></i> Output value</label>
+        <input type="text" id="node-input-defaultIfNoMatch">
     </div>
 </script>
 
@@ -158,7 +166,9 @@ TODO
             out: {value:"payload", validate:RED.validators.typedInput("outType"), required:true},
             outType: {value:"msg", required:true},
             outKeyOrValue: {value:"value", required:true},
-        	caseInsensitive: {value:true}
+        	caseInsensitive: {value:true},
+        	forwardIfNoMatch: {value:true},
+        	defaultIfNoMatch: {value:"Unknown {{payload}}"}
         },
         color:"#E2D96E",
         inputs:1,
@@ -220,6 +230,16 @@ TODO
             });
             
             $("#node-input-config").change();
+            
+            $("#node-input-forwardIfNoMatch").change(function() {
+            	if ( $(this).is(":checked") ) {
+            		$("#row-defaultIfNoMatch").show();
+            	} else {
+            		$("#row-defaultIfNoMatch").hide();
+            	}
+            });
+            
+            $("#node-input-forwardIfNoMatch").change();
             
         }
 
