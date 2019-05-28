@@ -1,16 +1,16 @@
 module.exports = function(RED) {
 	var mustache = require("mustache");
 	
-    function MappingsConfigNode(n) {
+    function MapConfigNode(n) {
     	RED.nodes.createNode(this, n);
     	this.name = n.name;
     	this.keyName = n.keyName;
     	this.valueName = n.valueName;
     	this.mappings = n.mappings;
     }
-    RED.nodes.registerType("mappings-config", MappingsConfigNode);
+    RED.nodes.registerType("map-config", MapConfigNode);
     
-    function MappingsMapNode(n) {
+    function MapMapNode(n) {
     	RED.nodes.createNode(this, n);
     	this.name = n.name;
     	this.config = RED.nodes.getNode(n.config);
@@ -58,9 +58,9 @@ module.exports = function(RED) {
         });
     	
     }
-    RED.nodes.registerType("mappings-map", MappingsMapNode);
+    RED.nodes.registerType("map-map", MapMapNode);
     
-    function MappingsSetNode(n) {
+    function MapSetNode(n) {
     	RED.nodes.createNode(this, n);
     	this.name = n.name;
     	this.config = RED.nodes.getNode(n.config);
@@ -87,5 +87,5 @@ module.exports = function(RED) {
     	});
 		    
     }
-    RED.nodes.registerType("mappings-set", MappingsSetNode);
+    RED.nodes.registerType("map-set", MapSetNode);
 }

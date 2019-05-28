@@ -1,5 +1,5 @@
 <!-- This is the config node for the mappings -->
-<script type="text/x-red" data-template-name="mappings-config">
+<script type="text/x-red" data-template-name="map-config">
 	<div class="form-row">
         <label for="node-config-input-name"><i class="icon-tag"></i> Name</label>
         <input type="text" id="node-config-input-name" placeholder="Name">
@@ -17,14 +17,14 @@
     </div>
 </script>
 
-<script type="text/x-red" data-help-name="mappings-config">
+<script type="text/x-red" data-help-name="map-config">
 <p>
 Configure the mappings
 </p>
 </script>
 
 <script type="text/javascript">
-    RED.nodes.registerType('mappings-config', {
+    RED.nodes.registerType('map-config', {
         category: 'config',
         defaults: {
         	name: {value:"", required:true},
@@ -97,7 +97,7 @@ Configure the mappings
 
 
 <!-- This node allows for mapping message properties -->
-<script type="text/x-red" data-template-name="mappings-map">
+<script type="text/x-red" data-template-name="map-map">
 	<div class="form-row">
         <label for="node-input-name"><i class="icon-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
@@ -148,18 +148,18 @@ Configure the mappings
 </script>
 
 <!-- Help text for map -->
-<script type="text/x-red" data-help-name="mappings-map">
+<script type="text/x-red" data-help-name="map-map">
 <p>
 TODO
 </p>
 </script>
 
 <script type="text/javascript">
-    RED.nodes.registerType('mappings-map', {
+    RED.nodes.registerType('map-map', {
         category: 'mappings',
         defaults: {
             name: {value:""},
-            config: {value:"", type:"mappings-config", required:true},
+            config: {value:"", type:"map-config", required:true},
             in: {value:"payload", validate:RED.validators.typedInput("inType"), required:true},
             inType: {value:"msg", required:true},
             inKeyOrValue: {value:"key", required:true},
@@ -262,7 +262,7 @@ TODO
 
 
 <!-- This node allows for setting a message property based on a given mapping -->
-<script type="text/x-red" data-template-name="mappings-set">
+<script type="text/x-red" data-template-name="map-set">
 	<div class="form-row">
         <label for="node-input-name"><i class="icon-tag"></i> Name</label>
         <input type="text" id="node-input-name" placeholder="Name">
@@ -291,18 +291,18 @@ TODO
 </script>
 
 <!-- Help text for map -->
-<script type="text/x-red" data-help-name="mappings-set">
+<script type="text/x-red" data-help-name="map-set">
 <p>
 TODO
 </p>
 </script>
 
 <script type="text/javascript">
-    RED.nodes.registerType('mappings-set', {
+    RED.nodes.registerType('map-set', {
         category: 'mappings',
         defaults: {
             name: {value:""},
-            config: {value:"", type:"mappings-config", required:true},
+            config: {value:"", type:"map-config", required:true},
             from: {value:"", required:true},
             out: {value:"payload", validate:RED.validators.typedInput("outType"), required:true},
             outType: {value:"msg", required:true},
