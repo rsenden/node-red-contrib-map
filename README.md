@@ -16,5 +16,5 @@ This is a [Node-RED] plugin that provides the following nodes:
   mappings. For example, given an input message containing `topic:deviceId`, 
   you can define separate outputs for device id `deviceId1` and `deviceId2`.
   
-  
+[Node-RED]:  http://nodered.org/  
 
