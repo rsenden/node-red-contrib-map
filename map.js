@@ -88,4 +88,47 @@ module.exports = function(RED) {
 		    
     }
     RED.nodes.registerType("map-set", MapSetNode);
+    
+    function MapSwitchNode(n) {
+    	RED.nodes.createNode(this, n);
+    	this.name = n.name;
+    	this.config = RED.nodes.getNode(n.config);
+    	this.outKeyOrValue = n.outKeyOrValue;
+    	this.in = n.in;
+    	this.inType = n.inType;
+    	this.inKeyOrValue = n.inKeyOrValue;
+    	this.caseInsensitive = n.caseInsensitive;
+    	this.outputKeys = n.outputKeys;
+    	
+    	var node = this;
+    	
+    	node.on("input", function(msg) {
+    		try {
+    			var inValue = RED.util.getMessageProperty(msg, node.in);
+    			if ( inValue && node.caseInsensitive ) {
+            		inValue = inValue.toLowerCase();
+            	}
+    			if ( inValue ) {
+	    			var mapping = node.config.mappings.find(function(mapping) {
+	    				return mapping[node.inKeyOrValue]===inValue;
+	    			});
+	    			if ( mapping ) {
+		            	var index = node.outputKeys.findIndex(function(key) {
+		            		return key===mapping.key;
+		            	});
+		            	if ( index > 0 ) {
+			            	var msgs = new Array(node.outputKeys.length);
+			            	msgs[index]=msg;
+			            	node.send(msgs);
+		            	}
+	    			}
+    			}
+            }
+            catch(err) {
+                node.error(err.message, msg);
+            }
+    	});
+		    
+    }
+    RED.nodes.registerType("map-switch", MapSwitchNode);
 }

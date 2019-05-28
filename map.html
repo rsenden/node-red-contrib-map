@@ -61,18 +61,16 @@ Configure the mappings
                 removable: true
             });
 
-            for (var i=0;i<this.mappings.length;i++) {
-                var mapping = this.mappings[i];
+            for (var i=0;i<node.mappings.length;i++) {
+                var mapping = node.mappings[i];
                 $("#node-config-input-mapping-container").editableList('addItem',{mapping:mapping,i:i});
             }
         },
         oneditsave: function() {
             var mappings = $("#node-config-input-mapping-container").editableList('items');
-            var mappingset;
             var node = this;
             node.mappings = [];
             mappings.each(function(i) {
-                var mappingData = $(this).data('data');
                 var mapping = $(this);
                 var r = {};
                 r.key = mapping.find(".node-config-input-mapping-key").val();
@@ -103,7 +101,7 @@ Configure the mappings
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
     <div class="form-row node-input-config">
-        <label for="node-input-config"><i class="icon-bullhorn"></i> Mapping</label>
+        <label for="node-input-config"><i class="icon-bullhorn"></i> Config</label>
         <input type="text" id="node-input-config">
     </div>
     <hr/>
@@ -268,7 +266,7 @@ TODO
         <input type="text" id="node-input-name" placeholder="Name">
     </div>
     <div class="form-row node-input-config">
-        <label for="node-input-config"><i class="icon-bullhorn"></i> Mapping</label>
+        <label for="node-input-config"><i class="icon-bullhorn"></i> Config</label>
         <input type="text" id="node-input-config">
     </div>
     <hr/>
@@ -358,6 +356,214 @@ TODO
             $("#node-input-config").change();
             
         }
+
+    });
+</script>
+
+
+
+<!-- This node provides a switch implementation for a given mapping configuration -->
+<script type="text/x-red" data-template-name="map-switch">
+	<div class="form-row">
+        <label for="node-input-name"><i class="icon-tag"></i> Name</label>
+        <input type="text" id="node-input-name" placeholder="Name">
+		<input type="hidden" id="node-input-outputs"/>
+    </div>
+    <div class="form-row node-input-config">
+        <label for="node-input-config"><i class="icon-bullhorn"></i> Config</label>
+        <input type="text" id="node-input-config">
+    </div>
+	<hr/>
+	<div class="form-row">
+        <label for="node-input-inKeyOrValue"><i class="fa fa-ellipsis-h"></i> Get</label>
+		<select id="node-input-inKeyOrValue">
+            <option value="key">key</option>
+            <option value="value">value</option>
+        </select>
+	</div>
+	<div class="form-row">
+		<label for="node-input-in"><i class="fa fa-ellipsis-h"></i> From</label>
+        <input type="text" id="node-input-in" placeholder="payload">
+        <input type="hidden" id="node-input-inType">
+    </div>
+    <hr/>
+	<div class="form-row">
+        <label for="node-input-outKeyOrValue"><i class="fa fa-ellipsis-h"></i> Output Name</label>
+		<select id="node-input-outKeyOrValue">
+            <option value="key">key</option>
+            <option value="value">value</option>
+        </select>
+	</div>
+    <hr/>
+	<div class="form-row node-input-switch-container-row">
+        <ol id="node-input-switch-container"></ol>
+    </div>
+	<div class="form-row">
+        <input type="checkbox" id="node-input-caseInsensitive" style="display: inline-block; width: auto; vertical-align: top;">
+		<label for="node-input-caseInsensitive" style="width:90%"><i class="fa fa-tag"></i> Ignore Case</label>
+    </div>
+</script>
+
+<!-- Help text for map -->
+<script type="text/x-red" data-help-name="map-switch">
+<p>
+TODO
+</p>
+</script>
+
+<script type="text/javascript">
+    RED.nodes.registerType('map-switch', {
+        category: 'mappings',
+        defaults: {
+            name: {value:""},
+            config: {value:"", type:"map-config", required:true},
+            outKeyOrValue: {value:"value", required:true},
+            in: {value:"payload", validate:RED.validators.typedInput("inType"), required:true},
+            inType: {value:"msg", required:true},
+            inKeyOrValue: {value:"key", required:true},
+            caseInsensitive: {value:true},
+            outputKeys: {value:[]},
+            outputs: {value:1}
+        },
+        color:"#E2D96E",
+        inputs:1,
+        outputs:1,
+        icon: "switch.png",
+        label: function () {
+            return this.name || "Switch";
+        },
+        labelStyle: function () {
+            return this.name ? "node_label_italic" : "";
+        },
+        oneditprepare: function() {
+        	var node = this;
+        	var outputCount = $("#node-input-outputs").val("{}");
+            if (!node.in) {
+                node.in = 'payload';
+                $("#node-input-in").val("payload");
+            }
+            if (!node.inType) {
+                node.inType = 'msg';
+            }
+            if (!node.inKeyOrValue) {
+            	node.inKeyOrValue = 'key';
+            }
+            
+            $("#node-input-in").typedInput({
+                default: 'msg',
+                types: ['msg'],
+                typeField: $("#node-input-inType")
+            });
+            if (!node.outKeyOrValue) {
+            	node.outKeyOrValue = 'value';
+            }
+            
+            $("#node-input-out").typedInput({
+                default: 'msg',
+                types: ['msg'],
+                typeField: $("#node-input-outType")
+            });
+            
+            $("#node-input-switch-container").css('min-height','250px').css('min-width','450px').editableList({
+                addItem: function(container,i,opt) {
+                	var config = RED.nodes.node($("#node-input-config").val());
+                	var mappings = config.mappings || [];
+                	var output = opt.output;
+                    container.css({
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap'
+                    });
+                    var row = $('<div/>').appendTo(container);
+                    var select = $('<select/>',{class:"node-input-switch-select",type:"text",style:"width:80%; margin-left: 5px;"}).appendTo(row);
+                    $.each(mappings, function(i, mapping) {
+	         			var $option = $("<option/>", {
+	         			    value: mapping.key,
+	         			    text: mapping.key+' - '+mapping.value,
+	         			});
+	         			select.append($option);
+         			});
+                    select.val(output);
+                    var finalspan = $('<span/>',{style:"float: right;margin-top: 6px;"}).appendTo(row);
+                    finalspan.append(' &#8594; <span class="node-config-input-mapping-index">'+(i+1)+'</span> ');
+                    var currentOutputs = JSON.parse(outputCount.val()||"{}");
+                    currentOutputs[opt.hasOwnProperty('i')?opt.i:opt._i] = i;
+                    outputCount.val(JSON.stringify(currentOutputs));
+                },
+                removeItem: function(opt) {
+                	var currentOutputs = JSON.parse(outputCount.val()||"{}");
+                    if (opt.hasOwnProperty('i')) {
+                        currentOutputs[opt.i] = -1;
+                    } else {
+                        delete currentOutputs[opt._i];
+                    }
+                    var mappings = $("#node-input-switch-container").editableList('items');
+                    mappings.each(function(i) {
+                        $(this).find(".node-config-input-mapping-index").html(i+1);
+                        var data = $(this).data('data');
+                        currentOutputs[data.hasOwnProperty('i')?data.i:data._i] = i;
+                    });
+                    outputCount.val(JSON.stringify(currentOutputs));
+                },
+                sortable: false,
+                removable: true
+            });
+            
+            $("#node-input-config").change(function() {
+            	var config = RED.nodes.node($(this).val());
+            	if (config) {
+	            	$('#node-input-inKeyOrValue option[value="key"]').text(config.keyName);
+	                $('#node-input-inKeyOrValue option[value="value"]').text(config.valueName);
+	                $('#node-input-outKeyOrValue option[value="key"]').text(config.keyName);
+	                $('#node-input-outKeyOrValue option[value="value"]').text(config.valueName);
+	                
+	                if (node.outputKeys) {
+	                	var container = $("#node-input-switch-container");
+	                	container.editableList('empty');
+	    	            for (var i=0;i<node.outputKeys.length;i++) {
+	    	                var output = node.outputKeys[i];
+	    	                container.editableList('addItem',{output:output,i:i});
+	    	            }
+	            	}
+            	}
+            });
+            
+            $("#node-input-config").change();
+        },
+        oneditsave: function() {
+            var outputsContainer = $("#node-input-switch-container").editableList('items');
+            var node = this;
+            node.outputKeys = [];
+            outputsContainer.each(function(i) {
+                var value = $(this).find(".node-input-switch-select").val();
+                node.outputKeys.push(value);
+            });
+        },
+        oneditresize: function(size) {
+            var rows = $("#dialog-form>div:not(.node-input-switch-row)");
+            var height = size.height;
+            for (var i=0;i<rows.size();i++) {
+                height -= $(rows[i]).outerHeight(true);
+            }
+            var editorRow = $("#dialog-form>div.node-input-switch-container-row");
+            height -= (parseInt(editorRow.css("marginTop"))+parseInt(editorRow.css("marginBottom")));
+            $("#node-input-switch-container").editableList('height',height);
+        },
+        outputLabels: function(index) {
+        	var node = this;
+            var outputKey = node.outputKeys[index];
+            var label = "";
+            if (outputKey) {
+            	var config = RED.nodes.node(node.config);
+            	var mappings = config.mappings || [];
+            	var mapping = mappings.find(function(mapping) {
+		    		return mapping.key===outputKey;
+		    	});
+		    	if (mapping) {
+            		label = mapping[this.outKeyOrValue];
+		    	}
+                return label;
+            }
+        },
 
     });
 </script>
