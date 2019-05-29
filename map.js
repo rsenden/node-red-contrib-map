@@ -119,7 +119,7 @@ module.exports = function(RED) {
             try {
             	var outValue = node.config.getMappingValue('lhs', node.from, node.outLhsOrRhs, false);
 		    	if (outValue) {
-		    		RED.util.setMessageProperty(msg, node.out, mapping[node.outLhsOrRhs]);
+		    		RED.util.setMessageProperty(msg, node.out, outValue);
 		            node.send(msg);
 		    	}
             }
