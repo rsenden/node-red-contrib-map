@@ -7,6 +7,64 @@ module.exports = function(RED) {
     	this.rhsName = n.rhsName;
     	this.lhsName = n.lhsName;
     	this.mappings = n.mappings;
+    	
+    	var node = this;
+    	
+    	/**
+    	 * This function converts a mappings array to a map.
+    	 * 
+    	 * Parameters:
+    	 * - lhsOrRhsForKey: May be either 'lhs' or 'rhs', defining whether to use the mapping LHS or RHS as the map key
+    	 * - keyToLowerCase: true if key needs to be converted to lower case (for case-insensitive look-up),
+    	 *                   false if the key is to be used as-is (for case-sensitive look-up)
+    	 */
+    	var mappingsToMap = function(lhsOrRhsForKey, keyToLowerCase) {
+    		return !node.mappings ? [] : node.mappings.reduce(function(result, mapping) {
+      		  var key = mapping[lhsOrRhsForKey];
+      		  var value = mapping;
+    		  if ( keyToLowerCase ) {
+    			  key = key.toLowerCase();
+    		  }
+    		  result[key] = value;
+    		  return result;
+    		}, {});
+    	}
+    	
+    	/**
+    	 * Define maps with keys as case-sensitive or case-insensitive LHS or RHS values
+    	 * and the corresponding mapping as value
+    	 */
+    	this.maps = {
+    		lhs: {
+    			caseSensitive: mappingsToMap('lhs', false),
+    			caseInsensitive: mappingsToMap('lhs', true)
+    		},
+    		rhs: {
+    			caseSensitive: mappingsToMap('rhs', false),
+    			caseInsensitive: mappingsToMap('rhs', true)
+    		}
+    	};
+    	
+    	/**
+    	 * Get the mapping for the given key value, matching it against either the
+    	 * LHS or RHS value of the mapping, then return this mapping
+    	 */
+    	this.getMapping = function(lhsOrRhsForKey, keyValue, caseInsensitive) {
+    		if ( caseInsensitive ) {
+    			keyValue = keyValue.toLowerCase();
+    		}
+    		return node.maps[lhsOrRhsForKey][caseInsensitive?'caseInsensitive':'caseSensitive'][keyValue];
+    	}
+    	
+    	/**
+    	 * Get the mapping for the given key value, matching it against either the
+    	 * LHS or RHS value of the mapping, then return wither the LHS or RHS value
+    	 * of this mapping
+    	 */
+    	this.getMappingValue = function(lhsOrRhsForKey, keyValue, lhsOrRhsForValue, caseInsensitive) {
+    		var mapping = node.getMapping(lhsOrRhsForKey, keyValue, caseInsensitive);
+    		return !mapping ? null : mapping[lhsOrRhsForValue];
+    	}
     }
     RED.nodes.registerType("map-config", MapConfigNode);
     
@@ -26,24 +84,10 @@ module.exports = function(RED) {
     	
     	var node = this;
     	
-    	var mappings = !this.config.mappings ? [] : this.config.mappings.reduce(function(result, item) {
-    		  var key = item[node.inLhsOrRhs];
-    		  var value = item[node.outLhsOrRhs];
-    		  if ( node.caseInsensitive ) {
-    			  key = key.toLowerCase();
-    		  }
-    		  result[key] = value;
-    		  return result;
-    		}, {});
-    	
     	node.on("input", function(msg) {
-
             try {
             	var inValue = RED.util.getMessageProperty(msg, node.in);
-            	if ( node.caseInsensitive ) {
-            		inValue = inValue.toLowerCase();
-            	}
-            	var outValue = mappings[inValue];
+            	var outValue = node.config.getMappingValue(node.inLhsOrRhs, inValue, node.outLhsOrRhs, node.caseInsensitive);
             	if ( !outValue && node.forwardIfNoMatch ) {
             		outValue = mustache.render(node.defaultIfNoMatch, msg);
             	}
@@ -73,10 +117,8 @@ module.exports = function(RED) {
     	node.on("input", function(msg) {
 
             try {
-		    	var mapping = !node.config.mappings ? null : this.config.mappings.find(function(mapping) {
-		    		return mapping.lhs===node.from;
-		    	});
-		    	if (mapping) {
+            	var outValue = node.config.getMappingValue('lhs', node.from, node.outLhsOrRhs, false);
+		    	if (outValue) {
 		    		RED.util.setMessageProperty(msg, node.out, mapping[node.outLhsOrRhs]);
 		            node.send(msg);
 		    	}
@@ -105,27 +147,16 @@ module.exports = function(RED) {
     	node.on("input", function(msg) {
     		try {
     			var inValue = RED.util.getMessageProperty(msg, node.in);
-    			if ( inValue && node.caseInsensitive ) {
-            		inValue = inValue.toLowerCase();
-            	}
-    			if ( inValue ) {
-	    			var mapping = node.config.mappings.find(function(mapping) {
-	    				var mappingValue = mapping[node.inLhsOrRhs];
-	    				if ( mappingValue && node.caseInsensitive ) {
-	                		mappingValue = mappingValue.toLowerCase();
-	                	}
-	    				return mappingValue===inValue;
-	    			});
-	    			if ( mapping ) {
-		            	var index = node.outputLhsValues.findIndex(function(outputLhsValue) {
-		            		return outputLhsValue===mapping.lhs;
-		            	});
-		            	if ( index > -1 ) {
-			            	var msgs = new Array(node.outputLhsValues.length);
-			            	msgs[index]=msg;
-			            	node.send(msgs);
-		            	}
-	    			}
+    			var outValue = node.config.getMappingValue(node.inLhsOrRhs, inValue, 'lhs', node.caseInsensitive);
+    			if ( outValue ) {
+	            	var index = node.outputLhsValues.findIndex(function(outputLhsValue) {
+	            		return outputLhsValue===outValue;
+	            	});
+	            	if ( index > -1 ) {
+		            	var msgs = new Array(node.outputLhsValues.length);
+		            	msgs[index]=msg;
+		            	node.send(msgs);
+	            	}
     			}
             }
             catch(err) {
