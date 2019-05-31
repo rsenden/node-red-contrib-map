@@ -65,8 +65,22 @@ properties before the mapping.
 
 <script type="text/javascript">
 	RED.mapFunctions = {
-		updateLhsOrRhsSelect: function(config, node, propertyName, readOnly) {
-			var select = $('#node-input-'+propertyName).find('option').remove().end(); // Remove any old options
+		/**
+		 * Find select by id based on given property name, determine current value based on
+		 * given property name and node, then call updateLhsOrRhsSelect to update the select.
+		 */
+		updateLhsOrRhsSelectById: function(config, node, propertyName, readOnly) {
+			RED.mapFunctions.updateLhsOrRhsSelect($('#node-input-'+propertyName), config, !node ? null : node[propertyName], readOnly);
+		},
+		/**
+		 * This function will update the given select as follows:
+	     * - Remove all previous options
+	     * - Append the LHS and RHS options, based on lhsName and rhsName from the given config
+	     * - Mark these options as disabled (display:none) if readOnly flag is set
+	     * - Select an option based on the given selectedValue
+		 */
+		updateLhsOrRhsSelect: function(select, config, selectedValue, readOnly) {
+			select.find('option').remove().end(); // Remove any old options
 			select.append($("<option/>", {
  			    value: 'lhs',
  			    text: !config?'lhs':config.lhsName,
@@ -77,8 +91,36 @@ properties before the mapping.
  			    text: !config?'rhs':config.rhsName,
  			    css: readOnly ? {'display':'none'}:{}
  			}));
-			if ( node ) {
-				select.val(node[propertyName]);
+			if ( selectedValue ) {
+				select.val(selectedValue);
+			}
+		},
+		/**
+		 * Find select by id based on given property name, determine current value based on
+		 * given property name and node, then call updateMappingSelect to update the select.
+		 */
+		updateMappingSelectById: function(config, node, propertyName) {
+			RED.mapFunctions.updateMappingSelect($('#node-input-'+propertyName), config, !node ? null : node[propertyName]);
+		},
+		/**
+		 * This function will update the given select as follows:
+	     * - Remove all previous options
+	     * - Append an option for each mapping defined in the given config
+	     * - Select an option based on the given selectedValue
+		 */
+		updateMappingSelect: function(select, config, selectedValue) {
+			if (config) {
+				select.find('option').remove().end(); // Remove any old options;
+				$.each(config.mappings, function(i, mapping) {
+		 			var $option = $("<option/>", {
+		 			    value: mapping.lhs+"|"+mapping.rhs,
+		 			    text: mapping.lhs+' - '+mapping.rhs
+		 			});
+		 			select.append($option);
+				});
+				if ( selectedValue ) {
+					select.val(selectedValue);
+				}
 			}
 		}
 	}
@@ -305,8 +347,8 @@ message property containing the device name.
             });
             $("#node-input-config").change(function() {
             	var config = RED.nodes.node($(this).val());
-            	RED.mapFunctions.updateLhsOrRhsSelect(config, node, "inLhsOrRhs", false);
-            	RED.mapFunctions.updateLhsOrRhsSelect(config, node, "outLhsOrRhs", true);
+            	RED.mapFunctions.updateLhsOrRhsSelectById(config, node, "inLhsOrRhs", false);
+            	RED.mapFunctions.updateLhsOrRhsSelectById(config, node, "outLhsOrRhs", true);
             	$('#node-input-inLhsOrRhs').change();
             });
             
@@ -440,18 +482,8 @@ id or device name.
             
             $("#node-input-config").change(function() {
             	var config = RED.nodes.node($(this).val());
-            	RED.mapFunctions.updateLhsOrRhsSelect(config, node, "outLhsOrRhs", false);
-            	var $mySelect = $('#node-input-from');
-            	$mySelect.children().remove().end()
-            	if (config) {
-         			$.each(config.mappings, function(i, mapping) {
-	         			var $option = $("<option/>", {
-	         			    value: mapping.lhs,
-	         			    text: mapping.lhs+' - '+mapping.rhs
-	         			});
-	         			$mySelect.append($option);
-         			});
-            	}
+            	RED.mapFunctions.updateLhsOrRhsSelectById(config, node, "outLhsOrRhs", false);
+            	RED.mapFunctions.updateMappingSelectById(config, node, "from");
             });
             
             $("#node-input-config").change();
@@ -603,14 +635,7 @@ outputs based on an incoming device id.
                     });
                     var row = $('<div/>').appendTo(container);
                     var select = $('<select/>',{class:"node-input-switch-select",type:"text",style:"width:80%; margin-left: 5px;"}).appendTo(row);
-                    $.each(mappings, function(i, mapping) {
-	         			var $option = $("<option/>", {
-	         			    value: mapping.lhs,
-	         			    text: mapping.lhs+' - '+mapping.rhs,
-	         			});
-	         			select.append($option);
-         			});
-                    select.val(output);
+                    RED.mapFunctions.updateMappingSelect(select, config, output);
                     var finalspan = $('<span/>',{style:"float: right;margin-top: 6px;"}).appendTo(row);
                     finalspan.append(' &#8594; <span class="node-config-input-mapping-index">'+(i+1)+'</span> ');
                 },
@@ -631,8 +656,8 @@ outputs based on an incoming device id.
             
             $("#node-input-config").change(function() {
             	var config = RED.nodes.node($(this).val());
-            	RED.mapFunctions.updateLhsOrRhsSelect(config, node, "inLhsOrRhs", false);
-            	RED.mapFunctions.updateLhsOrRhsSelect(config, node, "outLhsOrRhs", false);
+            	RED.mapFunctions.updateLhsOrRhsSelectById(config, node, "inLhsOrRhs", false);
+            	RED.mapFunctions.updateLhsOrRhsSelectById(config, node, "outLhsOrRhs", false);
             	if (config) {
 	                if (node.outputLhsValues) {
 	                	var container = $("#node-input-switch-container");
