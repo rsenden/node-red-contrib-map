@@ -161,7 +161,7 @@ module.exports = function(RED) {
 		this.inType = n.inType;
 		this.inLhsOrRhs = n.inLhsOrRhs;
 		this.caseInsensitive = n.caseInsensitive;
-		this.outputLhsValues = n.outputLhsValues;
+		this.switchValues = n.switchValues;
 
 		var node = this;
 
@@ -170,14 +170,13 @@ module.exports = function(RED) {
 				var inValue = RED.util.getMessageProperty(msg, node.in);
 				var outValue = node.config.getMappingValue(node.inLhsOrRhs, inValue, 'both', node.caseInsensitive);
 				if ( outValue ) {
-					var index = node.outputLhsValues.findIndex(function(outputLhsValue) {
-						return outputLhsValue===outValue;
+					var msgs = new Array(node.switchValues.length);
+					node.switchValues.forEach(function(switchValue, i) {
+						if ( switchValue===outValue ) {
+							msgs[i]=msg;
+						}
 					});
-					if ( index > -1 ) {
-						var msgs = new Array(node.outputLhsValues.length);
-						msgs[index]=msg;
-						node.send(msgs);
-					}
+					node.send(msgs);
 				}
 			}
 			catch(err) {

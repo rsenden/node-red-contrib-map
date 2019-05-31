@@ -582,7 +582,7 @@ outputs based on an incoming device id.
             inType: {value:"msg", required:true},
             inLhsOrRhs: {value:"lhs", required:true},
             caseInsensitive: {value:true},
-            outputLhsValues: {value:[]},
+            switchValues: {value:[]},
             outputs: {value:1}
         },
         color:"#E2D96E",
@@ -628,14 +628,14 @@ outputs based on an incoming device id.
                 addItem: function(container,i,opt) {
                 	var config = RED.nodes.node($("#node-input-config").val());
                 	var mappings = config.mappings || [];
-                	var output = opt.output;
+                	var switchValue = opt.switchValue;
                     container.css({
                         overflow: 'hidden',
                         whiteSpace: 'nowrap'
                     });
                     var row = $('<div/>').appendTo(container);
                     var select = $('<select/>',{class:"node-input-switch-select",type:"text",style:"width:80%; margin-left: 5px;"}).appendTo(row);
-                    RED.mapFunctions.updateMappingSelect(select, config, output);
+                    RED.mapFunctions.updateMappingSelect(select, config, switchValue);
                     var finalspan = $('<span/>',{style:"float: right;margin-top: 6px;"}).appendTo(row);
                     finalspan.append(' &#8594; <span class="node-config-input-mapping-index">'+(i+1)+'</span> ');
                 },
@@ -659,12 +659,12 @@ outputs based on an incoming device id.
             	RED.mapFunctions.updateLhsOrRhsSelectById(config, node, "inLhsOrRhs", false);
             	RED.mapFunctions.updateLhsOrRhsSelectById(config, node, "outLhsOrRhs", false);
             	if (config) {
-	                if (node.outputLhsValues) {
+	                if (node.switchValues) {
 	                	var container = $("#node-input-switch-container");
 	                	container.editableList('empty');
-	    	            for (var i=0;i<node.outputLhsValues.length;i++) {
-	    	                var output = node.outputLhsValues[i];
-	    	                container.editableList('addItem',{output:output,i:i});
+	    	            for (var i=0;i<node.switchValues.length;i++) {
+	    	                var switchValue = node.switchValues[i];
+	    	                container.editableList('addItem',{switchValue:switchValue,i:i});
 	    	            }
 	            	}
             	}
@@ -675,13 +675,13 @@ outputs based on an incoming device id.
         oneditsave: function() {
             var outputsContainer = $("#node-input-switch-container").editableList('items');
             var node = this;
-            node.outputLhsValues = [];
+            node.switchValues = [];
             outputsContainer.each(function(i) {
                 var value = $(this).find(".node-input-switch-select").val();
-                node.outputLhsValues.push(value);
+                node.switchValues.push(value);
             });
             
-            $("#node-input-outputs").val(node.outputLhsValues.length);
+            $("#node-input-outputs").val(node.switchValues.length);
         },
         oneditresize: function(size) {
             var rows = $("#dialog-form>div:not(.node-input-switch-row)");
@@ -695,16 +695,16 @@ outputs based on an incoming device id.
         },
         outputLabels: function(index) {
         	var node = this;
-            var outputLhsValue = node.outputLhsValues[index];
+            var switchValue = node&&node.switchValues ? node.switchValues[index] : null;
             var label = "";
-            if (outputLhsValue) {
+            if (switchValue) {
             	var config = RED.nodes.node(node.config);
             	var mappings = config.mappings || [];
             	var mapping = mappings.find(function(mapping) {
-		    		return mapping.lhs===outputLhsValue;
+		    		return mapping.lhs+'|'+mapping.rhs===switchValue;
 		    	});
 		    	if (mapping) {
-            		label = mapping[this.outLhsOrRhs];
+            		label = mapping[node.outLhsOrRhs];
 		    	}
                 return label;
             }
