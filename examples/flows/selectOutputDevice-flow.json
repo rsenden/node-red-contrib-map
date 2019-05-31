@@ -1,0 +1,74 @@
+[
+    {
+        "id": "2d7e2703.f48248",
+        "type": "inject",
+        "z": "f5d0c63e.659f28",
+        "name": "@12:00 send 'On'",
+        "topic": "",
+        "payload": "On",
+        "payloadType": "str",
+        "repeat": "",
+        "crontab": "00 12 * * *",
+        "once": false,
+        "onceDelay": 0.1,
+        "x": 131,
+        "y": 249,
+        "wires": [
+            [
+                "13785f59.f7b251"
+            ]
+        ]
+    },
+    {
+        "id": "13785f59.f7b251",
+        "type": "map-set",
+        "z": "f5d0c63e.659f28",
+        "name": "select output device 3",
+        "config": "8b6ac843.d683b8",
+        "from": "Output device 3|AC/0x01010101/1",
+        "out": "topic",
+        "outType": "msg",
+        "outLhsOrRhs": "rhs",
+        "x": 345,
+        "y": 249,
+        "wires": [
+            [
+                "5c2fe2a.a88511c"
+            ]
+        ]
+    },
+    {
+        "id": "5c2fe2a.a88511c",
+        "type": "rfx-lights-out",
+        "z": "f5d0c63e.659f28",
+        "topicSource": "msg",
+        "retransmit": "none",
+        "retransmitInterval": 20,
+        "topic": "",
+        "x": 528,
+        "y": 249,
+        "wires": []
+    },
+    {
+        "id": "8b6ac843.d683b8",
+        "type": "map-config",
+        "z": "",
+        "name": "ExampleOutputDevices",
+        "lhsName": "device name",
+        "rhsName": "device id",
+        "mappings": [
+            {
+                "lhs": "Output device 1",
+                "rhs": "AC/0x01020202/10"
+            },
+            {
+                "lhs": "Output device 2",
+                "rhs": "AC/0x01020203/1"
+            },
+            {
+                "lhs": "Output device 3",
+                "rhs": "AC/0x01010101/1"
+            }
+        ]
+    }
+]

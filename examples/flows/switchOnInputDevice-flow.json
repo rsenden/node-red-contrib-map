@@ -1,0 +1,127 @@
+[
+    {
+        "id": "166f4de5.456ac2",
+        "type": "rfx-lights-in",
+        "z": "f5d0c63e.659f28",
+        "name": "",
+        "port": "942bd4d.51dbe28",
+        "topicSource": "all",
+        "topic": "",
+        "x": 94,
+        "y": 141,
+        "wires": [
+            [
+                "5685efdc.ff09d"
+            ]
+        ]
+    },
+    {
+        "id": "5685efdc.ff09d",
+        "type": "map-switch",
+        "z": "f5d0c63e.659f28",
+        "name": "switch on input device id",
+        "config": "f6d6fe4.c4d0f",
+        "outLhsOrRhs": "rhs",
+        "in": "topic",
+        "inType": "msg",
+        "inLhsOrRhs": "lhs",
+        "caseInsensitive": true,
+        "switchValues": [
+            "AC/0x01010101/1|Input device 1",
+            "AC/0x01010101/2|Input device 2"
+        ],
+        "outputs": 2,
+        "x": 300,
+        "y": 140,
+        "wires": [
+            [
+                "c2ba06d8.238098"
+            ],
+            [
+                "a180695d.a7f298"
+            ]
+        ]
+    },
+    {
+        "id": "c2ba06d8.238098",
+        "type": "template",
+        "z": "f5d0c63e.659f28",
+        "name": "template for device 1",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "Action on input device 1",
+        "output": "str",
+        "x": 540,
+        "y": 117,
+        "wires": [
+            [
+                "f15a2361.11e"
+            ]
+        ]
+    },
+    {
+        "id": "a180695d.a7f298",
+        "type": "template",
+        "z": "f5d0c63e.659f28",
+        "name": "template for device 2",
+        "field": "payload",
+        "fieldType": "msg",
+        "format": "handlebars",
+        "syntax": "mustache",
+        "template": "Action on input device 2",
+        "output": "str",
+        "x": 537,
+        "y": 160,
+        "wires": [
+            [
+                "f15a2361.11e"
+            ]
+        ]
+    },
+    {
+        "id": "f15a2361.11e",
+        "type": "debug",
+        "z": "f5d0c63e.659f28",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "x": 739,
+        "y": 137,
+        "wires": []
+    },
+    {
+        "id": "942bd4d.51dbe28",
+        "type": "rfxtrx-port",
+        "z": "",
+        "port": "/dev/rfxcom",
+        "enableDebug": true,
+        "rfyVenetianMode": "EU"
+    },
+    {
+        "id": "f6d6fe4.c4d0f",
+        "type": "map-config",
+        "z": "",
+        "name": "ExampleInputDevices",
+        "lhsName": "device id",
+        "rhsName": "device name",
+        "mappings": [
+            {
+                "lhs": "AC/0x01010101/1",
+                "rhs": "Input device 1"
+            },
+            {
+                "lhs": "AC/0x01010101/2",
+                "rhs": "Input device 2"
+            },
+            {
+                "lhs": "AC/0x01010101/3",
+                "rhs": "Input device 3"
+            }
+        ]
+    }
+]

@@ -1,0 +1,131 @@
+[
+    {
+        "id": "bfdcf17f.19a54",
+        "type": "rfx-lights-in",
+        "z": "f5d0c63e.659f28",
+        "name": "",
+        "port": "942bd4d.51dbe28",
+        "topicSource": "all",
+        "topic": "",
+        "x": 92,
+        "y": 47,
+        "wires": [
+            [
+                "51f4d745.2398b8"
+            ]
+        ]
+    },
+    {
+        "id": "97ff183d.51ab68",
+        "type": "debug",
+        "z": "f5d0c63e.659f28",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "x": 777,
+        "y": 47,
+        "wires": []
+    },
+    {
+        "id": "51f4d745.2398b8",
+        "type": "map-map",
+        "z": "f5d0c63e.659f28",
+        "name": "add msg.inputDeviceName",
+        "config": "f6d6fe4.c4d0f",
+        "in": "topic",
+        "inType": "msg",
+        "inLhsOrRhs": "lhs",
+        "out": "inputDeviceName",
+        "outType": "msg",
+        "outLhsOrRhs": "rhs",
+        "caseInsensitive": true,
+        "forwardIfNoMatch": true,
+        "defaultIfNoMatch": "Unknown: {{{topic}}}",
+        "x": 302,
+        "y": 47,
+        "wires": [
+            [
+                "be4ceaef.0d7648"
+            ]
+        ]
+    },
+    {
+        "id": "be4ceaef.0d7648",
+        "type": "map-map",
+        "z": "f5d0c63e.659f28",
+        "name": "add msg.outputDeviceName",
+        "config": "8b6ac843.d683b8",
+        "in": "topic",
+        "inType": "msg",
+        "inLhsOrRhs": "rhs",
+        "out": "outputDeviceName",
+        "outType": "msg",
+        "outLhsOrRhs": "lhs",
+        "caseInsensitive": true,
+        "forwardIfNoMatch": true,
+        "defaultIfNoMatch": "None",
+        "x": 559,
+        "y": 47,
+        "wires": [
+            [
+                "97ff183d.51ab68"
+            ]
+        ]
+    },
+    {
+        "id": "942bd4d.51dbe28",
+        "type": "rfxtrx-port",
+        "z": "",
+        "port": "/dev/rfxcom",
+        "enableDebug": true,
+        "rfyVenetianMode": "EU"
+    },
+    {
+        "id": "f6d6fe4.c4d0f",
+        "type": "map-config",
+        "z": "",
+        "name": "ExampleInputDevices",
+        "lhsName": "device id",
+        "rhsName": "device name",
+        "mappings": [
+            {
+                "lhs": "AC/0x01010101/1",
+                "rhs": "Input device 1"
+            },
+            {
+                "lhs": "AC/0x01010101/2",
+                "rhs": "Input device 2"
+            },
+            {
+                "lhs": "AC/0x01010101/3",
+                "rhs": "Input device 3"
+            }
+        ]
+    },
+    {
+        "id": "8b6ac843.d683b8",
+        "type": "map-config",
+        "z": "",
+        "name": "ExampleOutputDevices",
+        "lhsName": "device name",
+        "rhsName": "device id",
+        "mappings": [
+            {
+                "lhs": "Output device 1",
+                "rhs": "AC/0x01020202/10"
+            },
+            {
+                "lhs": "Output device 2",
+                "rhs": "AC/0x01020203/1"
+            },
+            {
+                "lhs": "Output device 3",
+                "rhs": "AC/0x01010101/1"
+            }
+        ]
+    }
+]
