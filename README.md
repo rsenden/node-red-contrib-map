@@ -24,7 +24,7 @@ to output device id's.
 The following screenshots show example configurations for mapping input device id's to
 device names, and output device names to device id's:
 
-![Device Mappings](examples/nodes/configNodesInAndOutDevices-screenshot.png "Device Mappings")
+![Device Mappings](https://raw.githubusercontent.com/rsenden/node-red-contrib-map/HEAD/examples/nodes/configNodesInAndOutDevices-screenshot.png "Device Mappings")
 
 The configuration node allows for configuring the following fields:
 
@@ -39,7 +39,7 @@ The configuration node allows for configuring the following fields:
 
 The following screenshot shows an example configuration for the map node:
 
-![Map Node](examples/nodes/mapNode-screenshot.png "Map Node")
+![Map Node](https://raw.githubusercontent.com/rsenden/node-red-contrib-map/HEAD/examples/nodes/mapNode-screenshot.png "Map Node")
 
 The map node allows for configuring the following fields:
 
@@ -69,7 +69,7 @@ The map node allows for configuring the following fields:
  
 The following screenshot shows an example configuration for the set node:
  
-![Set Node](examples/nodes/setNode-screenshot.png "Set Node")
+![Set Node](https://raw.githubusercontent.com/rsenden/node-red-contrib-map/HEAD/examples/nodes/setNode-screenshot.png "Set Node")
  
 The set node allows for configuring the following fields:
  
@@ -84,7 +84,7 @@ The set node allows for configuring the following fields:
  
 The following screenshot shows an example configuration for the switch node:
  
-![Switch Node](examples/nodes/switchNode-screenshot.png "Switch Node")
+![Switch Node](https://raw.githubusercontent.com/rsenden/node-red-contrib-map/HEAD/examples/nodes/switchNode-screenshot.png "Switch Node")
  
 The switch node allows for configuring the following fields:
  
@@ -123,9 +123,9 @@ If the given input device is mapped to a corresponding output device (i.e. if a 
 controls some output device), this flow will also add the output device name to the message. If no
 output device is known for the given input device, this flow will add `None` as the output device name.
 
-![Add Device Names](examples/flows/addDeviceNames-screenshot.png "Add Device Names")
+![Add Device Names](https://raw.githubusercontent.com/rsenden/node-red-contrib-map/HEAD/examples/flows/addDeviceNames-screenshot.png "Add Device Names")
 
-The JSON configuration for this flow can be found here: [addDeviceNames-flow.json](examples/flows/addDeviceNames-flow.json).
+The JSON configuration for this flow can be found here: [addDeviceNames-flow.json](https://github.com/rsenden/node-red-contrib-map/blob/master/examples/flows/addDeviceNames-flow.json).
 
 ### Select Output Device
 
@@ -134,9 +134,9 @@ This flow demonstrates the *set* node.
 Given some input trigger, this flow will send a message to an output device configured through the output
 device mapping configuration.
 
-![Select Output Device](examples/flows/selectOutputDevice-screenshot.png "Select Output Device")
+![Select Output Device](https://raw.githubusercontent.com/rsenden/node-red-contrib-map/HEAD/examples/flows/selectOutputDevice-screenshot.png "Select Output Device")
 
-The JSON configuration for this flow can be found here: [selectOutputDevice-flow.json](examples/flows/selectOutputDevice-flow.json).
+The JSON configuration for this flow can be found here: [selectOutputDevice-flow.json](https://github.com/rsenden/node-red-contrib-map/blob/master/examples/flows/selectOutputDevice-flow.json).
 
 ### Switch on Input Device
 
@@ -144,9 +144,9 @@ This flow demonstrates the *switch* node.
 
 Given some input message, this flow will select between switch outputs based on the configured device mapping configuration.
 
-![Switch on Input Device](examples/flows/switchOnInputDevice-screenshot.png "Switch on Input Device")
+![Switch on Input Device](https://raw.githubusercontent.com/rsenden/node-red-contrib-map/HEAD/examples/flows/switchOnInputDevice-screenshot.png "Switch on Input Device")
 
-The JSON configuration for this flow can be found here: [switchOnInputDevice-flow.json](examples/flows/switchOnInputDevice-flow.json).
+The JSON configuration for this flow can be found here: [switchOnInputDevice-flow.json](https://github.com/rsenden/node-red-contrib-map/blob/master/examples/flows/switchOnInputDevice-flow.json).
 
 ## Screenshots of more elaborate examples
 
@@ -156,7 +156,7 @@ information, only screenshots and generic descriptions are provided; no JSON flo
 
 ### RFXCom In
 
-![RFXCom In](examples/flows/rfx-in-screenshot.png "RFXCom In")
+![RFXCom In](https://raw.githubusercontent.com/rsenden/node-red-contrib-map/HEAD/examples/flows/rfx-in-screenshot.png "RFXCom In")
 
 For every input provided by node-red-contrib-rfxcom, this flow does the following:
 
@@ -171,7 +171,7 @@ For every input provided by node-red-contrib-rfxcom, this flow does the followin
   
 ### RFXCom Out
 
- ![RFXCom Out](examples/flows/rfx-out-screenshot.png "RFXCom Out")
+ ![RFXCom Out](https://raw.githubusercontent.com/rsenden/node-red-contrib-map/HEAD/examples/flows/rfx-out-screenshot.png "RFXCom Out")
  
  This flow provides the two *link in* nodes named `OUT_RFX` and `OUT_RFX_DEVICE_NAME`.
  
@@ -192,7 +192,7 @@ For every input provided by node-red-contrib-rfxcom, this flow does the followin
 
 ### HTTP Control
 
-![HTTP Control](examples/flows/httpControl-screenshot.png "HTTP Control")
+![HTTP Control](https://raw.githubusercontent.com/rsenden/node-red-contrib-map/HEAD/examples/flows/httpControl-screenshot.png "HTTP Control")
 
 This flow takes incoming HTTP GET requests to /device, extracts the device name and action from the request
 parameters, and then invokes `OUT_RFX_DEVICE_NAME` (see above). Note that this flow doesn't use any of the
@@ -201,7 +201,7 @@ nodes provided by this plugin, but it utilizes the device name to device id mapp
 
 ### Night Light 
 
-![Night Light](examples/flows/nightlight-screenshot.png "Night Light")
+![Night Light](https://raw.githubusercontent.com/rsenden/node-red-contrib-map/HEAD/examples/flows/nightlight-screenshot.png "Night Light")
 
 This flow is triggered around sunset to turn on a night light, and triggered at a specific time to turn the 
 night light off again. It utilizes the *set* node provided by this plugin to set `msg.topic` to the output 
