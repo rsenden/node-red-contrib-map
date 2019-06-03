@@ -18,9 +18,7 @@
 </script>
 
 <script type="text/x-red" data-help-name="map-config">
-<p>
-Configure mappings to be used by the various nodes provided by this plugin.
-</p> 
+<p>Configure mappings to be used by the various nodes provided by this plugin.</p> 
 
 <h3>Details</h3>
 
@@ -34,19 +32,18 @@ The following properties can be configured on this configuration node:
      input device id's to friendly names, and a configuration named <i>RfxComOut</i>
      for mapping friendly device names to device id's.</li>
   <li><b>LHS Name</b><br/>
-     This property allows for configuring the name of the left-hand side of the 
-     mappings. For example, if your left-hand side of the mapping contains device
-     id's (for input devices), you could set this property to <i>Device id</i>. 
-     Likewise, if your left-hand side contains device names (for output devices),
-     you could set this property to <i>Device name</i>.</li>
+     The name of the left-hand side of the mappings. For example, if your left-hand 
+     side of the mapping contains device id's (for input devices), you could set 
+     this property to <i>Device id</i>. Likewise, if your left-hand side contains 
+     device names (for output devices), you could set this property to 
+     <i>Device name</i>.</li>
   <li><b>Rhs Name</b><br/>
-     This property allows for configuring the name of the right-hand side of the 
-     mappings. For example, if your right-hand side of the mapping contains device
-     id's (for output devices), you could set this property to <i>Device id</i>. 
-     Likewise, if your right-hand side contains device names (for input devices),
-     you could set this property to <i>Device name</i>.</li>
+     The name of the right-hand side of the mappings. For example, if your right-hand 
+     side of the mapping contains device id's (for output devices), you could set this 
+     property to <i>Device id</i>. Likewise, if your right-hand side contains device 
+     names (for input devices), you could set this property to <i>Device name</i>.</li>
   <li><b>Mappings</b><br/>
-     By using the <i>Add</i> and <i>Remove</i> buttons, you can add the actual
+     By using the <i>Add</i> and <i>Remove</i> buttons, you can modify the actual
      mappings. For example, for the <i>RfxComIn</i> configuration, the left-hand
      side of these mappings would contain the device id like 'AC/0x01010101/1',
      and the right-hand side would contain the device name like 'Motion Sensor 1'.
@@ -54,16 +51,6 @@ The following properties can be configured on this configuration node:
      mappings would contain the device name like 'light-entrance', and the right-hand
      side would contain the device id like 'AC/0x02020202/1'.</li>
 </ul>
-
-<p>
-The examples above assume that you want to have a one-on-one mapping between device
-id and device name or vice versa. Of course, using the standard Node Red nodes like
-<i>split</i> and <i>join</i>, you can create more complex mappings. For example, the
-mappings could contain values like <i>location,device name</i>, in which case you would
-use the <i>split</i> and <i>join</i> nodes to either split the location and device name
-into separate properties after the mapping, or to join separate location and device name
-properties before the mapping.
-</p>
 </script>
 
 <script type="text/javascript">
@@ -239,10 +226,10 @@ properties before the mapping.
 <p>Map a message input property to a message output property based on the configured mappings.</p>
 
 <p>
-For example, configured with a mapping <i>My device id</i>
--&gt; <i>My device name</i>, for each incoming message this node can look up the
-device id from a configurable message property, and then set another configurable 
-message property containing the device name.
+For example, configured with a mapping between device id's and corresponding
+device names, for each incoming message this node can look up the device id
+from a configurable message property, and add the corresponding device name 
+to the outgoing message.
 </p>
 
 <h3>Details</h3>
@@ -255,39 +242,41 @@ The following properties can be configured on this node:
   <li><b>Config</b><br/>
      The mapping configuration to use.</li>
   <li><b>Get</b><br/>
-     This property allows for configuring whether the input property contains values
-     from the left-hand side of the configured mapping, or from the right-hand side.
+     Specify whether the incoming message contains values from the left-hand side or 
+     right-hand side of the configured mappings.
      The options in this select box show the <i>LHS Name</i> and <i>RHS Name</i> as 
      defined in the mapping configuration, for example allowing you to select whether 
-     the configured input property contains a 'device id' or 'device name'.</li>
+     the incoming message contains a 'device id' or 'device name'.</li>
   <li><b>From</b><br/>
-     This property allows for configuring from which message property to retrieve
-     the value to be mapped. For example, this could contain something like 
-     <i>msg.topic</i>, <i>msg.topicName</i>, <i>msg.payload</i>, <i>msg.deviceId</i>, or <i>msg.deviceName</i>.</li>
+     Specify from which property on the incoming message to retrieve the value to be 
+     mapped. For example, this could contain something like <code>msg.topic</code>, 
+     <code>msg.topicName</code>, <code>msg.payload</code>, <code>msg.deviceId</code>, 
+     or <code>msg.deviceName</code>.</li>
   <li><b>Set</b><br/>
-     This property allows for configuring whether the left-hand side of the configured 
-     mapping, or the right-hand side should be written to the output property. You cannot
-     change this setting; if <i>Get</i> is configured to use the left-hand side of the 
-     mapping, then this property will be set to the right-hand side of the mapping, and
-     vice versa.</li>
+     Specify whether the left-hand side or right-hand side of the configured mappings 
+     should be added to the outgoing message. You cannot change this setting; 
+     if <i>Get</i> is configured to use the left-hand side of the mapping, then this 
+     property will be set to the right-hand side of the mapping, and vice versa.</li>
   <li><b>On</b><br/>
-     This property allows for configuring to which message property the mapped value
-     should be written. For example, this could contain something like 
-     <i>msg.topic</i>, <i>msg.topicName</i>, <i>msg.payload</i>, <i>msg.deviceId</i>, or <i>msg.deviceName</i>.</li>
+     Specify to which property on the outgoing message the mapped value should be written. 
+     For example, this could contain something like <code>msg.topic</code>, 
+     <code>msg.topicName</code>, <code>msg.payload</code>, <code>msg.deviceId</code>, 
+     or <code>msg.deviceName</code>.</li>
   <li><b>Ignore Case</b><br/>
-     If enabled, the node will use a case-insensitive look-up of the input property
-     in the configured mapping. For example, if the input property contains 'LIGHT'
-     but the mapping contains 'light', the mapping will be found if the <i>Ignore Case</i> 
-     property is enabled, whereas no mapping will be found if this property is disabled.</li>
+     If enabled, the node will use a case-insensitive look-up of the incoming message 
+     property value in the configured mappings. For example, an incoming message  
+     containing 'LIGHT' as the device name will be matched against a mapping containing
+     'light' as the device name if this setting is enabled, but will not be matched if 
+     this setting is disabled.</li>
   <li><b>Forward message if no matching mapping is found</b><br/>
      If disabled, no message will be forwarded to subsequent nodes if no mapping can be found
-     for a given message input value. If enabled, you can configure a default value to
-     be added to the message in case no mapping can be found. </li>
+     for a given input message value. If enabled, you can configure a default value to
+     be added to the outgoing message in case no mapping can be found. </li>
   <li><b>Output Value</b><br/>
-     In case no mapping can be found for a given message input value, this property defined
-     the value to be written to the message output property. This default value can reference
+     In case no mapping can be found for a given input message value, this property defined
+     the value to be written to the outgoing message. This default value can reference
      message properties using Mustache template syntax, for example <i>Unknown: {{{topic}}}</i>.
-     This value will be written to the message property defined in the <b>On</b> configuration
+     This value will be written to the outgoing message property defined in the <b>On</b> configuration
      option.</li>
 </ul>
 </script>
@@ -424,9 +413,14 @@ The following properties can be configured on this node:
 <p>Set a message output property based on the configured mapping.</p>
 
 <p>
-For example, configured with a mapping <i>My device id</i>
--&gt; <i>My device name</i>, this node can add a message property containing 
-either the device id or device name.
+For example, configured with a mapping between device id's and corresponding
+device names, this node can add either the device id or device name for a
+specific device to every incoming message.
+</p>
+
+<p>
+Within a flow, this allows for selecting a specific device from the list of
+configured mappings, for example to send a command to that specific device.
 </p>
 
 <h3>Details</h3>
@@ -439,17 +433,18 @@ The following properties can be configured on this node:
   <li><b>Config</b><br/>
      The mapping configuration to use.</li>
   <li><b>From</b><br/>
-     This property allows for configuring the mapping from which to retrieve either the
-     right-hand side or left-hand side value to be added to the message.</li>
+     Select the mapping from which to retrieve either the right-hand side or left-hand side 
+     value to be added to the outgoing message.</li>
   <li><b>Set</b><br/>
-     This property allows for configuring whether to add the left-hand side or right-hand
-     side of the configured mapping to the message. For example, given the example above,
-     this property allows for specifying whether you want to add either <i>My device id</i>
-     or <i>My device name</i> to the message.</li>
+     Specify whether the left-hand side or right-hand side of the selected mapping should
+     be added to the outgoing message. For example, given the example above,
+     this property allows for specifying whether you want to add either the <i>device id</i>
+     or <i>device name</i> to the outgoing message.</li>
   <li><b>On</b><br/>
-     This property allows for configuring to which message property the mapping value
-     should be written. For example, this could contain something like 
-     <i>msg.topic</i>, <i>msg.payload</i>, or <i>msg.deviceName</i>.</li>
+     Specify to which property on the outgoing message the value should be written. 
+     For example, this could contain something like <code>msg.topic</code>, 
+     <code>msg.topicName</code>, <code>msg.payload</code>, <code>msg.deviceId</code>, 
+     or <code>msg.deviceName</code>.</li>
 </ul>
 </script>
 
@@ -548,14 +543,13 @@ The following properties can be configured on this node:
 
 <!-- Help text for map -->
 <script type="text/x-red" data-help-name="map-switch">
-<p>Route messages by matching an input message property against configured mappings.</p>
+<p>Route messages by matching an input message property against the configured mappings.</p>
 
 <p>
-This node is somewhat similar to the Node Red switch node, routing messages to separate outputs 
-based on a list of mappings. For example, given a configuration with mappings <i>Device id 1</i>-&gt;<i>Device name 1</i>
-and <i>Device id 2</i>-&gt;<i>Device name 2</i>, this node allows for selecting between different
-outputs based on an incoming device id.
-</p>
+For example, configured with a mapping between device id's and corresponding
+device names, this node can route incoming messages to different outputs, based
+on the device id (or device name) specified in the incoming message.
+<p>
 
 <h3>Details</h3>
 
@@ -567,28 +561,29 @@ The following properties can be configured on this node:
   <li><b>Config</b><br/>
      The mapping configuration to use.</li>
   <li><b>Get</b><br/>
-     This property allows for configuring whether the input property contains values
-     from the left-hand side of the configured mapping, or from the right-hand side.
+     Specify whether the incoming message contains values from the left-hand side or 
+     right-hand side of the configured mappings.
      The options in this select box show the <i>LHS Name</i> and <i>RHS Name</i> as 
      defined in the mapping configuration, for example allowing you to select whether 
-     the configured input property contains a 'device id' or 'device name'.</li>
+     the incoming message contains a 'device id' or 'device name'.</li>
   <li><b>From</b><br/>
-     This property allows for configuring which message property to retrieve the value 
-     on which the switch should be performed. For example, this could contain something 
-     like <i>msg.topic</i>, <i>msg.payload</i>, or <i>msg.deviceName</i>.</li>
+     Specify from which property on the incoming message to retrieve the value on which 
+     the switch should be performed. For example, this could contain something like 
+     <code>msg.topic</code>, <code>msg.topicName</code>, <code>msg.payload</code>, 
+     <code>msg.deviceId</code>, or <code>msg.deviceName</code>.</li>
   <li><b>Output Name</b><br/>
-     This property allows for configuring whether the switch output label should be
-     based on the left-hand side or right-hand side of the configured mapping. Given the
+     Specify whether the switch output label (as shown in the flow editor) should show
+     the left-hand side or right-hand side of the configured mapping. Given the
      example above, the output label could show either the device id or device name.</li>
   <li><b>Switch List</b><br/>
      By using the <i>Add</i> and <i>Remove</i> buttons, you can add switch outputs
      matching the given mapping.</li>
   <li><b>Ignore Case</b><br/>
-     If enabled, the node will use a case-insensitive look-up of the input property
-     in the configured mapping. For example, if the input property contains 'LIGHT',
-     the switch will match a mapping containing 'light' if the <i>Ignore Case</i> 
-     property is enabled, whereas the switch will not match this mapping if this property 
-     is disabled.</li>
+     If enabled, the node will use a case-insensitive look-up of the incoming message 
+     property value in the configured mappings. For example, an incoming message  
+     containing 'LIGHT' as the device name will be matched against a mapping containing
+     'light' as the device name if this setting is enabled, but will not be matched if 
+     this setting is disabled.</li>
 </ul>
 </script>
 
