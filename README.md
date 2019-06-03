@@ -1,6 +1,6 @@
 # node-red-contrib-map
 
-This is a [Node-RED] plugin that provides a new *mappings* category with the 
+This is a [Node-RED](http://nodered.org/) plugin that provides a new *mappings* category with the 
 following nodes:
 
 * *map*: Allows for mapping a configurable property from an input message to a
@@ -24,8 +24,7 @@ to output device id's.
 The following screenshots show example configurations for mapping input device id's to
 device names, and output device names to device id's:
 
-![Input Device Mapping](examples/nodes/configNodeInDevices-screenshot.png "Input Device Mappings")
-![Output Device Mapping](examples/nodes/configNodeOutDevices-screenshot.png "Output Device Mappings")
+![Device Mappings](examples/nodes/configNodesInAndOutDevices-screenshot.png "Device Mappings")
 
 The configuration node allows for configuring the following fields:
 
@@ -211,7 +210,5 @@ device id to be controlled.
 ## Version history
 
 * _1.0.1_: Some documentation updates & fixes
-* _1.0.0_: Initial version
-  
-[Node-RED]:  http://nodered.org/  
+* _1.0.0_: Initial version  
 
