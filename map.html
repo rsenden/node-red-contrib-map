@@ -19,10 +19,13 @@
 
 <script type="text/x-red" data-help-name="map-config">
 <p>
-This configuration node allows for configuring mappings to be used by the various
-nodes provided by this plugin. The following properties can be configured on this
-configuration node:
-</p>
+Configure mappings to be used by the various nodes provided by this plugin.
+</p> 
+
+<h3>Details</h3>
+
+The following properties can be configured on this configuration node:
+
 <ul>
   <li><b>Name</b><br/>
      The name of this configuration node; this can be used to differentiate between
@@ -233,13 +236,19 @@ properties before the mapping.
 
 <!-- Help text for map -->
 <script type="text/x-red" data-help-name="map-map">
+<p>Map a message input property to a message output property based on the configured mappings.</p>
+
 <p>
-This node allows for mapping message input properties to message output properties
-based on the configured mapping. For example, configured with a mapping <i>My device id</i>
+For example, configured with a mapping <i>My device id</i>
 -&gt; <i>My device name</i>, for each incoming message this node can look up the
 device id from a configurable message property, and then set another configurable 
 message property containing the device name.
 </p>
+
+<h3>Details</h3>
+
+The following properties can be configured on this node:
+
 <ul>
   <li><b>Name</b><br/>
      The name of this node.</li>
@@ -412,12 +421,18 @@ message property containing the device name.
 
 <!-- Help text for map -->
 <script type="text/x-red" data-help-name="map-set">
+<p>Set a message output property based on the configured mapping.</p>
+
 <p>
-This node allows for setting a message output property based on the left-hand side or 
-right-hand side of a given mapping. For example, configured with a mapping <i>My device id</i>
--&gt; <i>My device name</i>, this node can add a message property containing either the device 
-id or device name.
+For example, configured with a mapping <i>My device id</i>
+-&gt; <i>My device name</i>, this node can add a message property containing 
+either the device id or device name.
 </p>
+
+<h3>Details</h3>
+
+The following properties can be configured on this node:
+
 <ul>
   <li><b>Name</b><br/>
      The name of this node.</li>
@@ -533,12 +548,19 @@ id or device name.
 
 <!-- Help text for map -->
 <script type="text/x-red" data-help-name="map-switch">
+<p>Route messages by matching an input message property against configured mappings.</p>
+
 <p>
-This node is somewhat similar to the Node Red switch node, creating separate outputs based
-on a list of mappings. For example, given a configuration with mappings <i>Device id 1</i>-&gt;<i>Device name 1</i>
+This node is somewhat similar to the Node Red switch node, routing messages to separate outputs 
+based on a list of mappings. For example, given a configuration with mappings <i>Device id 1</i>-&gt;<i>Device name 1</i>
 and <i>Device id 2</i>-&gt;<i>Device name 2</i>, this node allows for selecting between different
 outputs based on an incoming device id.
 </p>
+
+<h3>Details</h3>
+
+The following properties can be configured on this node:
+
 <ul>
   <li><b>Name</b><br/>
      The name of this node.</li>
