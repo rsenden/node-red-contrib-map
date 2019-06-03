@@ -21,19 +21,19 @@ to output device id's.
 
 ## Configuration node
 
-The following screenshots show example configurations for mapping input device id's to
-device names, and output device names to device id's:
+The following screenshots show example settings for the configuration node:
 
 ![Device Mappings](https://raw.githubusercontent.com/rsenden/node-red-contrib-map/HEAD/examples/nodes/configNodesInAndOutDevices-screenshot.png "Device Mappings")
 
-The configuration node allows for configuring the following fields:
+The configuration on the left shows input device mappings, which can be used to map incoming 
+device id's to corresponding device names. Likewise, the configuration on the right shows 
+output device mappings, which can be used to map device names to corresponding device id's.
 
-* *Name*: Name of the configuration.
-* *LHS Name*: Name that describes the left-hand side of the mappings.
-* *RHS Name*: Name that describes the right-hand side of the mappings.
-* *List of mappings*: The list of mappings defined in this configuration. For example, if *LHS Name* is defined
-  as `device id` and *RHS Name* is defined as `device name`, the input fields on the left specify
-  actual device id's, and the input fields on the right specify the corresponding device names.
+Note that all nodes allow for selecting whether to use the left or right column from the mappings.
+As such, even though the primary purpose of the input device mappings configuration is to map input 
+device id's to names, you can also map input device names to id's. 
+
+
   
 ## Map node
 
@@ -41,29 +41,15 @@ The following screenshot shows an example configuration for the map node:
 
 ![Map Node](https://raw.githubusercontent.com/rsenden/node-red-contrib-map/HEAD/examples/nodes/mapNode-screenshot.png "Map Node")
 
-The map node allows for configuring the following fields:
+In this example:
 
-* *Name*: Optional name for this node.
-* *Config*: The mapping configuration to use (see above).
-* *Get*: Whether to match the value from the message property configured in the *From* field against
-  the left-hand side or right-hand side of the mapping. For example, if the configuration node
-  specifies `device id` as the *LHS Name* and `device name` as the *RHS Name*, the *Get*
-  property allows for specifying whether the input message property configured in the *From*
-  field is expected to contain a `device id` or a `device name`.
-* *From*: Which field to retrieve from the input message to be matched against the configured mappings.
-* *Set*: Read-only field; if *Get* is set to the left-hand side of the mapping, then this field is set
-  to the right-hand side of the mapping, and vice versa. For example, if *Get* is set to `device id`,
-  then *Set* is set to `device name`, and vice versa.
-* *On*: This field specifies which message property to set to the mapped value, if a mapping is found based on 
-  the *Get* and *From* fields.
-* *Ignore Case*: Whether to ignore case when matching the input message property configured through *From*
-  to the configured list of mappings. For example, if *Ignore Case* is enabled, an input 
-  message property containing `MyDeviceName` will match a mapping containing `mydevicename`.
-* *Forward message if no matching mapping is found*: If disabled, the message will not be forwarded if no
-  mapping is found. If enabled, you can specify a default value to be added to the message property identified
-  by the *On* field, as configured through the *Output value* property.
-* *Output value*: Default value to set on the *On* message property if no mapping is found. This field can
-  use Mustache syntax, and by default will be set to something like `Unknown: {{{payload}}}`.      
+* We use the mappings provided by the `ExampleInputDevices` configuration
+* We look up the `device id`, contained in the `msg.topic` property of the incoming 
+  message, in the list of mappings provided by `ExampleInputDevices` 
+* If a matching mapping is found, we set the `msg.inputDeviceName` property on the 
+  outgoing message to the corresponding `device name`
+* We will do a case-insensitive look-up; for example `myDeviceId` will match `MYDEVICEID`
+* If no mapping is found, we will still forward the message and set `msg.inputDeviceName` to `Unknown: [topic from incoming message]`
     
 ## Set node
  
@@ -71,14 +57,12 @@ The following screenshot shows an example configuration for the set node:
  
 ![Set Node](https://raw.githubusercontent.com/rsenden/node-red-contrib-map/HEAD/examples/nodes/setNode-screenshot.png "Set Node")
  
-The set node allows for configuring the following fields:
+In this example:
+
+* We use the mappings provided by the `ExampleOutputDevices` configuration
+* We set the `msg.topic` property on the outgoing message to the
+  `device id` for `Output device 3` 
  
-* *Name*: Optional name for this node.
-* *Config*: The mapping configuration to use (see above).
-* *From*: Which mapping to use as input to set the output message property.
-* *Set*: Whether to set the left-hand side or right-hand side of the configured mapping as the 
-  message output property.
-* *On*: This field specifies which message property to set based on the *From* and *Set* fields.
  
 ## Switch node
  
@@ -86,26 +70,15 @@ The following screenshot shows an example configuration for the switch node:
  
 ![Switch Node](https://raw.githubusercontent.com/rsenden/node-red-contrib-map/HEAD/examples/nodes/switchNode-screenshot.png "Switch Node")
  
-The switch node allows for configuring the following fields:
- 
-* *Name*: Optional name for this node.
-* *Config*: The mapping configuration to use (see above).
-* *Get*: Whether to match the value from the message property configured in the *From* field against
-  the left-hand side or right-hand side of the mapping. For example, if the configuration node
-  specifies `device id` as the *LHS Name* and `device name` as the *RHS Name*, the *Get*
-  property allows for specifying whether the input message property configured in the *From*
-  field is expected to contain a `device id` or a `device name`.
-* *From*: Which field to retrieve from the input message to be matched against the configured mappings.
-* *Output Name*: Specifies whether the switch output labels shown in the Node-RED user interface should show
-  the left-hand side or right-hand side of the mapping. For example, if the configuration node
-  specifies `device id` as the *LHS Name* and `device name` as the *RHS Name*, the *Output Name*
-  property allows for specifying whether the switch output label should show either the `device id` 
-  or `device name`.
-* *List of switches*: Matches a given input message against the configured mapping, and invokes the
-  corresponding switch output.
-* *Ignore Case*: Whether to ignore case when matching the input message property configured through *From*
-  to the configured list of mappings. For example, if *Ignore Case* is enabled, an input 
-  message property containing `MyDeviceName` will match a mapping containing `mydevicename`.
+In this example:
+
+* We use the mappings provided by the `ExampleInputDevices` configuration
+* If the `msg.topic` property from the incoming message matches the 
+  `device id` for `Input device 1`, the message will be routed to output 1
+* Likewise, if the `msg.topic` property from the incoming message matches the 
+  `device id` for `Input device 2`, the message will be routed to output 2
+* In the flow editor, the outputs will be labeled with the `device name`, i.e.
+  `Input Device 1` and `Input Device 2` in this example
      
 ## Simple flow examples
 
