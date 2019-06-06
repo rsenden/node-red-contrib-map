@@ -182,6 +182,7 @@ device id to be controlled.
 
 ## Version history
 
+* _1.0.3_: Fixed handling of empty output values
 * _1.0.2_: Fixed handling of input values that are null or not a string 
 * _1.0.1_: Some documentation updates & fixes
 * _1.0.0_: Initial version  

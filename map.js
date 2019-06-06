@@ -114,7 +114,7 @@ module.exports = function(RED) {
 				if ( !outValue && node.forwardIfNoMatch ) {
 					outValue = mustache.render(node.defaultIfNoMatch, msg);
 				}
-				if ( outValue ) {
+				if ( outValue || node.forwardIfNoMatch ) {
 					RED.util.setMessageProperty(msg, node.out, outValue);
 					node.send(msg);
 				}
@@ -141,10 +141,8 @@ module.exports = function(RED) {
 
 			try {
 				var outValue = node.config.getMappingValue('both', node.from, node.outLhsOrRhs, false);
-				if (outValue) {
-					RED.util.setMessageProperty(msg, node.out, outValue);
-					node.send(msg);
-				}
+				RED.util.setMessageProperty(msg, node.out, outValue);
+				node.send(msg);
 			}
 			catch(err) {
 				node.error(err.message, msg);
