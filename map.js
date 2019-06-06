@@ -71,6 +71,8 @@ module.exports = function(RED) {
 		 * - 'both': Match the given key value against '[LHS]|[RHS]' of the configured mappings
 		 */
 		this.getMapping = function(lhsOrRhsOrBothForKey, keyValue, caseInsensitive) {
+			if ( !keyValue ) { return null; }
+			keyValue = String(keyValue);
 			if ( caseInsensitive ) {
 				keyValue = keyValue.toLowerCase();
 			}
